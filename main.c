@@ -57,7 +57,7 @@ int processEvents(SDL_Window *window, Man *man,Bullet *mermi, Enemy *enemy, Enem
 				case SDLK_SPACE:
 					if (mermi->life != 1) {
 						mermi->x = man->x + (man->size)/2 - (mermi->width)/2;
-						mermi->y = man-> y;
+						mermi->y = man-> y - man->size/10;
 						mermi->life = 1;
 					}
 
@@ -141,15 +141,16 @@ int processEvents(SDL_Window *window, Man *man,Bullet *mermi, Enemy *enemy, Enem
 
 void doRender(SDL_Renderer* renderer, Man* man, Bullet *mermi, Enemy *enemy, Enemy *enemyler) {
 
-	SDL_SetRenderDrawColor(renderer, 50, 10, 30, 255);
+	SDL_SetRenderDrawColor(renderer, 10, 0, 20, 255);
 	SDL_RenderClear(renderer);
-	SDL_SetRenderDrawColor(renderer, 204, 204, 244, 255);
 
+
+	SDL_SetRenderDrawColor(renderer, 20, 204, 84, 255);
 	SDL_Rect rect = { man -> x,man -> y, man->size,man->size };
-
 	SDL_RenderFillRect(renderer, &rect); // burada içini dolduracağımız cismin adresine atıfta bulunuyoruz.
 
 	if (mermi->life != 0) {
+		SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 		SDL_Rect bullet_1 = { mermi -> x,mermi -> y,mermi -> width,mermi -> height };
 		SDL_RenderFillRect(renderer, &bullet_1);
 
@@ -172,9 +173,9 @@ void doRender(SDL_Renderer* renderer, Man* man, Bullet *mermi, Enemy *enemy, Ene
 	for (int n = 0; n < enemy_count; n++) {
 
 		if (enemyler[n].life != 0) {
-			SDL_SetRenderDrawColor(renderer, 204, 204, 20, 255);
+			SDL_SetRenderDrawColor(renderer, 204, 20, 20, 255);
 			SDL_RenderFillRect(renderer, &enemy_1[n]);
-			SDL_SetRenderDrawColor(renderer, 100, 20, 190, 255);
+			SDL_SetRenderDrawColor(renderer, 150, 20, 20, 255);
 			SDL_RenderFillRect(renderer, &enemy_1_dec[n]);
 		}
 	}
