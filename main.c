@@ -1,41 +1,30 @@
-#include <SDL.h>
+﻿#include <SDL.h>
 #include <stdio.h>
+#include "mystructs.h"
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #define FPS = 30
-#define FRAME_TARGET_TIME = (1000/FPS) //her frame kaç ms sürecek
-#define enemy_count 10
-int last_frame_time = 0;
 
-typedef struct {
-	int x, y;
-	int life;
-	int size;
-	int puan;
-} Man;
-typedef struct {
-	float x;
-	float y;
-	int life;
-	int width;
-	int height;
-}Bullet;
-typedef struct {
-	float x;
-	float y;
-	int color;
-	int life;
-	int width;
-	int height;
-	int speed;
-}Enemy;
+#define FRAME_TARGET_TIME = (1000/FPS) //her frame kaç ms sürecek
+#define enemy_count 20
+
+
+int atack_speed = 10;
+int bullet_speed = 1000;
+
+int last_frame_time = 1;
+int biterken = 0;
+
 int processEvents(SDL_Window *window, Man *man,Bullet *mermi, Enemy *enemy, Enemy *enemyler) {
 	SDL_Event event;
 	int done = 0;
-	
 	float delta_time = (SDL_GetTicks() - last_frame_time) / 1000.0f;
 	last_frame_time = SDL_GetTicks();
 
-	
+	Mix_Chunk* shootEffect = Mix_LoadWAV("laserShoot.wav");
+	Mix_Chunk* hitEffect = Mix_LoadWAV("hitHurt.wav");
+
 
 	// moving part
 	while (SDL_PollEvent(&event)) {
@@ -55,12 +44,8 @@ int processEvents(SDL_Window *window, Man *man,Bullet *mermi, Enemy *enemy, Enem
 					done = 1;
 					break;
 				case SDLK_SPACE:
-					if (mermi->life != 1) {
-						mermi->x = man->x + (man->size)/2 - (mermi->width)/2;
-						mermi->y = man-> y - man->size/10;
-						mermi->life = 1;
-					}
-
+					bullet_speed += 10;
+					//atack_speed -= 10;
 					break;
 			}
 			break;
@@ -72,6 +57,37 @@ int processEvents(SDL_Window *window, Man *man,Bullet *mermi, Enemy *enemy, Enem
 	}
 
 	const Uint8* state = SDL_GetKeyboardState(NULL);
+	//mermi fonksiyonları
+
+	if (mermi->life != 1) {
+		if (atack_speed < (SDL_GetTicks() - biterken)) { //burada iki saniyede bir ateş etsin diye ayarlamaya çalıştım ama olmadı nedense.
+			mermi->x = man->x + (man->size) / 2 - (mermi->width) / 2;
+			mermi->y = man->y - man->size / 10;
+			mermi->life = 1;
+			Mix_PlayChannel(-1, shootEffect, 0);
+
+		}
+		else {
+			//printf("mermi zaamanı gelmedi");
+		}
+	}
+
+	if (mermi->life == 1) {
+		mermi->y -= bullet_speed * delta_time;
+	}
+
+	if (mermi->y < 0) {
+		mermi->life = 0;
+		biterken = SDL_GetTicks();
+	}
+
+	if (mermi->life <= 0) {
+		mermi->y = 2000;
+		mermi->x = 2000;
+	}
+
+
+
 	if (state[SDL_SCANCODE_RIGHT]) {
 		man->x += 400 * delta_time;
 	}
@@ -83,18 +99,6 @@ int processEvents(SDL_Window *window, Man *man,Bullet *mermi, Enemy *enemy, Enem
 	}
 	if (state[SDL_SCANCODE_DOWN]){
 		man->y += 400 * delta_time;
-	}
-
-	if (mermi->life == 1) {
-		mermi->y -= 1000 * delta_time;
-	}
-	if (mermi->y < 0) {
-		mermi->life = 0;
-	}
-
-	if (mermi->life <= 0) {
-		mermi->y = -2000;
-		mermi->x = -2000;
 	}
 
 	for (int n = 0; n < enemy_count; n++) {
@@ -124,6 +128,8 @@ int processEvents(SDL_Window *window, Man *man,Bullet *mermi, Enemy *enemy, Enem
 				enemyler[n].life -= 1;
 				man->puan += 1;
 				mermi->life = 0;
+				Mix_PlayChannel(-1, hitEffect, 0);
+				biterken = SDL_GetTicks();
 			}
 
 		}
@@ -150,9 +156,12 @@ void doRender(SDL_Renderer* renderer, Man* man, Bullet *mermi, Enemy *enemy, Ene
 	SDL_RenderFillRect(renderer, &rect); // burada içini dolduracağımız cismin adresine atıfta bulunuyoruz.
 
 	if (mermi->life != 0) {
+		
+
 		SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
 		SDL_Rect bullet_1 = { mermi -> x,mermi -> y,mermi -> width,mermi -> height };
 		SDL_RenderFillRect(renderer, &bullet_1);
+
 
 	}
 
@@ -191,17 +200,24 @@ int main(int argc, char* argv[]) {
 	SDL_Renderer* renderer; //renderer tanımlama
 	SDL_Init(SDL_INIT_EVERYTHING); // sdl'i çalıştırıyor 
 
-
+	//TTF_Init();
+	//TTF_Font* font = TTF_OpenFont("arial.ttf", 24);
 
 	Man man;
 	man.x = 220;
-	man.y = 110;
+	man.y = 310;
 	man.size = 50;
 	man.puan = 0;
-	
+
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+
+
+	//Mix_Music* deneme = Mix_LoadWav("laserShoot.wav");
+
+
 	Bullet mermi;
-	mermi.x = -10; 
-	mermi.y = -10;
+	mermi.x = 10000; 
+	mermi.y = 10000;
 	mermi.width = 20;
 	mermi.height = 20;
 	
@@ -212,14 +228,17 @@ int main(int argc, char* argv[]) {
 	enemy.height = 60;
 	enemy.life = 1;
 
+	Mix_Chunk* bornEffect = Mix_LoadWAV("synth.wav");
+
+
 	Enemy enemyler[enemy_count];
 	for (int n = 0; n < enemy_count; n++) {
 		enemyler[n].x = n * 100;
 		enemyler[n].y = 400;
-		enemyler[n].width = 40 + n*4;
-		enemyler[n].height =  40 + n*4;
-		enemyler[n].life = 1;
-		enemyler[n].speed =  140 - n * 10 ;
+		enemyler[n].width = 40 + n*10;
+		enemyler[n].height =  40 + n*10;
+		enemyler[n].life = n*10;
+		enemyler[n].speed =  140 + 10*n ;
 	}
 
 	
@@ -231,15 +250,15 @@ int main(int argc, char* argv[]) {
 
 
 
+
 	int done = 0;
+		Mix_PlayChannel(-1, bornEffect, 0);
 	while (!done) {
 
 		done = processEvents(window, &man, &mermi, &enemy, &enemyler);
 		//render display
 		doRender(renderer, &man, &mermi, &enemy,&enemyler);
 	}
-
-	
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	
