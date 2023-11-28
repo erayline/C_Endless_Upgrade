@@ -1,4 +1,4 @@
-﻿#include <SDL.h>
+#include <SDL.h>
 #include <stdio.h>
 #include "mystructs.h"
 #include <SDL_ttf.h>
@@ -7,7 +7,7 @@
 #define FPS = 30
 
 #define FRAME_TARGET_TIME = (1000/FPS) //her frame kaç ms sürecek
-#define enemy_count 20
+#define enemy_count 3
 
 
 int atack_speed = 10;
@@ -244,7 +244,7 @@ int main(int argc, char* argv[]) {
 	
 
 
-	window = SDL_CreateWindow("Game",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1024,740,SDL_WINDOW_BORDERLESS);
+	window = SDL_CreateWindow("Game",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1424,740,SDL_WINDOW_BORDERLESS);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 
 
