@@ -233,7 +233,7 @@ int main(int argc, char* argv[]) {
 
 	Enemy enemyler[enemy_count];
 	for (int n = 0; n < enemy_count; n++) {
-		enemyler[n].x = n * 100;
+		enemyler[n].x =  300 + n * 300;
 		enemyler[n].y = 400;
 		enemyler[n].width = 40 + n*10;
 		enemyler[n].height =  40 + n*10;
@@ -247,7 +247,7 @@ int main(int argc, char* argv[]) {
 	window = SDL_CreateWindow("Game",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1424,740,SDL_WINDOW_BORDERLESS);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 
-
+	SDL_SetWindowFullscreen(window,SDL_WINDOW_FULLSCREEN);
 
 
 
