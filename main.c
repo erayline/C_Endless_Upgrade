@@ -64,6 +64,7 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermi, Enemy* enemyler, 
 	int man_ortasiX = man->x + man->size / 2;
 	int man_ortasiY = man->y + man->size / 2;  // sürekli adamın ortasını bulmaya çalıştığım için kısalttım bu şekilde
 
+
 	// burada bubble sort inşa ettim sıfırdan kendim. işime yarayacak kadar çalışıyor.
 	int uzaklikSirasi[enemy_count][2];
 	int tutucuX, tutucuY, tutucuP;//pisagor
@@ -156,7 +157,6 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermi, Enemy* enemyler, 
 					mermi->y = man->y + man->size / 2 - mermi->width/2;
 					mermi->life = 1;
 					Mix_PlayChannel(-1, shootEffect, 0);
-
 				}
 				else {
 					//printf("mermi zaamanı gelmedi");
@@ -249,6 +249,9 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermi, Enemy* enemyler, 
 
 	}
 
+	//Mix_FreeChunk(&shootEffect);
+	//Mix_FreeChunk(&hitEffect);
+
 	return done;
 }
 
@@ -264,8 +267,9 @@ void doRender(SDL_Renderer* renderer, Man* man, Bullet* mermi, Enemy* enemyler) 
 	SDL_Rect rect = { man->x,man->y, man->size,man->size };
 	SDL_RenderFillRect(renderer, &rect); // burada içini dolduracağımız cismin adresine atıfta bulunuyoruz.
 
+	SDL_SetRenderDrawColor(renderer, 10, 80, 30, 200);
 	SDL_Rect man_range_rect = { man->x + man->size / 2 - man->range ,man->y + man->size / 2 - man->range, man->range * 2, man->range * 2 };
-	SDL_RenderDrawRect(renderer, &man_range_rect, 1);
+	SDL_RenderDrawRect(renderer, &man_range_rect);
 
 
 	if (mermi->life != 0) {
@@ -341,7 +345,6 @@ int main(int argc, char* argv[]) {
 
 	//TTF_Font* font = TTF_OpenFont("arial.ttf", 24);
 	//Mix_Music* deneme = Mix_LoadWav("laserShoot.wav");
-
 	Mix_Chunk* shootEffect = Mix_LoadWAV("laserShoot.wav"); // ses yükledim
 	Mix_Chunk* hitEffect = Mix_LoadWAV("hitHurt.wav"); // ses yükledim
 
@@ -352,7 +355,7 @@ int main(int argc, char* argv[]) {
 	man.y = 310;
 	man.size = 50;
 	man.puan = 0;
-	man.range = 200;
+	man.range = 230;
 
 	Bullet mermi;
 	mermi.x = 10000;
@@ -361,8 +364,6 @@ int main(int argc, char* argv[]) {
 	mermi.height = 20;
 	mermi.speedx = 10;
 	mermi.speedy = 10;
-
-	Mix_Chunk* bornEffect = Mix_LoadWAV("synth.wav");
 
 
 	Enemy enemyler[enemy_count];
@@ -388,15 +389,13 @@ int main(int argc, char* argv[]) {
 
 	int done = 0;
 	Mix_PlayChannel(1, background, -1);
-	Mix_PlayChannel(-1, bornEffect, 0);
 	while (!done) {
-		done = processEvents(window, &man, &mermi, &enemyler,&hitEffect,&shootEffect);
+		done = processEvents(window, &man, &mermi, &enemyler,hitEffect,shootEffect);
 		//render display
 		doRender(renderer, &man, &mermi, &enemyler);
 	}
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-
 
 
 	return 0;
