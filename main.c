@@ -10,14 +10,14 @@
 
 
 /*  yapılacaklar :
-	her üç saniyede bir düşman oluşsun düşman // dalgaları oluşsun
-	arayüz oluşturmaya başla // karakterler için gif kullan 
+	arayüz oluşturmaya başla karakterler için gif kullan 
+	//ekrana yazılar yazdırmaya başla bunu çok kullanacağın için fonksiyon falan oluştur. (iteme fareyi sürükleyince, bölümü yazdırırken falan)
 
-
-
+	//eşya oluştur sürü sürü
 
 
    yapılanlar:
+	her üç saniyede bir düşman oluşsun düşman // dalgaları oluşsun // yaptım gibi gibi, demo için yeterli
 	düşmanın her köşesini algılamıyor sol üst sağ alt algılıyor// çözdüm
 	düşman hareketlerine mermi hareketi mekaniğini ekle. // çözüldü artık adamakıllı beni takip ediyorlar
 
@@ -125,7 +125,6 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermiler, Enemy* enemyle
 				done = 1;
 				break;
 			case SDLK_SPACE: //denemek için
-				bullet_speed_interval -= 10;
 				man->range += 20;
 				break;
 			}
@@ -166,7 +165,7 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermiler, Enemy* enemyle
 		   (icindemi(man->x - man->range, man->x +man->size + man->range, enemyler[n].x + enemyler[n].width)	&& icindemi(man->y - man->range, man->y + man->size + man->range, enemyler[n].y)) ||
 		   (icindemi(man->x - man->range, man->x +man->size + man->range, enemyler[n].x + enemyler[n].width)	&& icindemi(man->y - man->range, man->y + man->size + man->range, enemyler[n].y + enemyler[n].height))
 			){
-			for (int i = 0; i < 30; i++) {
+			for (int i = 0; i < mermi_count; i++) {
 				if (mermiler[i].life != 1) { // halihazırda ateşlenmemiş mermiyi ateşliyor
 					if ( bullet_speed_interval < (SDL_GetTicks() - last_bullet_shot)) { //burada iki saniyede bir ateş etsin diye ayarlamaya çalıştım 
 						if ( 10 < (SDL_GetTicks() - mermiler[i].biterken)) {
@@ -182,7 +181,7 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermiler, Enemy* enemyle
 		}
 	}
 
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < mermi_count; i++) {
 
 		if (mermiler[i].life == 1) {
 			mermiler[i].x -= mermiler[i].speedx;
@@ -196,13 +195,13 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermiler, Enemy* enemyle
 		}
 	}
 
-	speed_constant = 300;
+	speed_constant = 500;
 	float diagnal = uzaklikSirasi[enemy_count - 1][0];
 
 	float cosforx = (man_ortasiX - enemyler[closest_enemy_index].x - enemyler[closest_enemy_index].width / 2) / diagnal;
 	float sinfory = (man_ortasiY - enemyler[closest_enemy_index].y - enemyler[closest_enemy_index].height / 2) / diagnal;
 
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < mermi_count; i++) {
 
 		if (mermiler[i].life <= 0) {
 			mermiler[i].speedx = cosforx * speed_constant * delta_time;
@@ -220,21 +219,25 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermiler, Enemy* enemyle
 	//enemy güncelleme başlangıç
 	// spawn olacakların sayısını tanımladığın bir değişkenin olabilir.
 	int idd = 0;
-	if (5000 < SDL_GetTicks() - last_spawn ) {
+	if (1000 < SDL_GetTicks() - last_spawn ) {
 		printf("oldu bu iş");
 		last_spawn = SDL_GetTicks();
 
 		while (idd < 2){ // UNDER CONSTRUCTİON ŞUAN BOZUK
 			for (int n = 0; n < enemy_count; n++) {
-				if (enemyler[n].life == 0) {
+				if (enemyler[n].life < 1) {
 					enemyler[n].y = enemy_start_coord[n][1];
 					enemyler[n].x = enemy_start_coord[n][0];
-					enemyler[n].width = 50;
-					enemyler[n].height = 50;
+					enemyler[n].width = 20;
+					enemyler[n].height = 20;
 					enemyler[n].life = 1;
 					enemyler[n].speed = 70 + n * 4;
+					last_spawn = SDL_GetTicks();
 					idd++;
 				}
+			}
+			if (idd < 2) {
+				break;
 			}
 		}
 
@@ -263,15 +266,16 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermiler, Enemy* enemyle
 			}
 
 
-			for (int i = 0; i < 30; i++) {
+			for (int i = 0; i < mermi_count; i++) {
 				if ((((enemyler[n].x < mermiler[i].x) && (enemyler[n].x + enemyler[n].width > mermiler[i].x)) || ((enemyler[n].x < mermiler[i].x + mermiler[i].width) && (enemyler[n].x + enemyler[n].width > mermiler[i].x + mermiler[i].width))) && (((enemyler[n].y < mermiler[i].y) && (enemyler[n].y + enemyler[n].height > mermiler[i].y)) || ((enemyler[n].y < mermiler[i].y + mermiler[i].height) && (enemyler[n].y + enemyler[n].height > mermiler[i].y + mermiler[i].height)))) {
 					enemyler[n].life -= 1;
 					man->puan += 1; // mermi için collision detection
 					mermiler[i].life = 0;
 					Mix_PlayChannel(-1, hitEffect, 0);
 					mermiler[i].biterken = SDL_GetTicks();
-					if (bullet_speed_interval != 1) { //// denemek için yaptım silinecek
-						bullet_speed_interval -= 30;
+					if (bullet_speed_interval > 1) { //// denemek için yaptım silinecek
+						bullet_speed_interval -= 1;
+						man->range += 1;
 					}
 					else {
 						bullet_speed_interval = 1;
@@ -288,15 +292,13 @@ int processEvents(SDL_Window* window, Man* man, Bullet* mermiler, Enemy* enemyle
 
 
 int enson=0;
-void doRender(SDL_Renderer* renderer, Man* man, Bullet* mermiler, Enemy* enemyler,SDL_Surface* enemy1_surface) {
-	SDL_Rect birden = { 0,0,enemy1_surface->w,enemy1_surface->h };
-	SDL_Rect ikiye = { 0,0,enemy1_surface->w,enemy1_surface->h };
-	//SDL_Rect birden = { 0,0,enemy1_surface->w,enemy1_surface,h };
-	SDL_BlitSurface(enemy1_surface, &birden, &renderer, &ikiye);
-
-
+void doRender(SDL_Renderer* renderer, Man* man, Bullet* mermiler, Enemy* enemyler, TTF_Font* font,SDL_Color white){
+	
+	
 	SDL_SetRenderDrawColor(renderer, 10, 0, 20, 255);
 	SDL_RenderClear(renderer); // arkaplan katmanı
+
+
 
 
 	SDL_SetRenderDrawColor(renderer, 20, 204, 84, 255);
@@ -310,7 +312,7 @@ void doRender(SDL_Renderer* renderer, Man* man, Bullet* mermiler, Enemy* enemyle
 
 
 
-	for (int n = 0; n < 30; n++) {
+	for (int n = 0; n < mermi_count; n++) {
 		if (mermiler[n].life != 0) {
 
 			SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
@@ -319,8 +321,8 @@ void doRender(SDL_Renderer* renderer, Man* man, Bullet* mermiler, Enemy* enemyle
 
 		} 
 	} 
-	SDL_Rect mermiler_1[30];
-	for (int n = 0; n < 30; n++) {
+	SDL_Rect mermiler_1[mermi_count];
+	for (int n = 0; n < mermi_count; n++) {
 		mermiler_1[n].x = mermiler[n].x;
 		mermiler_1[n].y = mermiler[n].y;
 		mermiler_1[n].w = mermiler[n].width;
@@ -352,50 +354,87 @@ void doRender(SDL_Renderer* renderer, Man* man, Bullet* mermiler, Enemy* enemyle
 			SDL_RenderFillRect(renderer, &enemy_1_dec[n]);
 		}
 	}// enemy katmanı bitiş
+	//ekrana resim çizdirme başlangıç
+	////////////////////SDL_Rect deneme1 = { 10,10,100,100 };
+	////////////////////SDL_Rect deneme2 = {10,10,100,100};
+	////////////////////SDL_RenderCopy(renderer, enemy1_texture, &deneme1,&rect);
+	//ekrana resim çizdirme bitiş
+
+	//ekrana yazı yazdırma başlangıç
+	const char *puan = "eray";
+	SDL_Surface* text_surface = TTF_RenderText_Solid(font, puan, white);
+	SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer,text_surface);
+	SDL_Rect text_rect = { 10,10,text_surface->w,text_surface->h };
+	SDL_RenderCopy(renderer, text_texture, NULL, &text_rect);
+	SDL_DestroyTexture(text_texture);
+	SDL_FreeSurface(text_surface);
+
+	// Puanı metin olarak biçimlendirme
+
+
 
 	SDL_RenderPresent(renderer);
 }
 
 
 int main(int argc, char* argv[]) {
+	SDL_Window* window;  //window tanımlama
+	window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_BORDERLESS);
+	SDL_Renderer* renderer; //renderer tanımlama
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	
 
 
-	SDL_Window* window;  //window tanımlama
-	SDL_Renderer* renderer; //renderer tanımlama
-	SDL_Init(SDL_INIT_VIDEO); // sdl'i çalıştırıyor 
+	SDL_Init(SDL_INIT_EVERYTHING); // sdl'i çalıştırıyor 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-
-
-
-
-
-	//TTF_Font* font = TTF_OpenFont("arial.ttf", 24);
-	//Mix_Music* deneme = Mix_LoadWav("laserShoot.wav");
 	Mix_Chunk* shootEffect = Mix_LoadWAV("sounds/laserShoot.wav"); // ses yükledim
 	Mix_Chunk* hitEffect = Mix_LoadWAV("sounds/hitHurt.wav"); // ses yükledim
+
 	
 	///RESİM YÜKLEME
-	IMG_Init(IMG_INIT_PNG);
-	SDL_Surface* enemy1_surface = IMG_Load("images/enemy1.png");
-	///RESİM YÜKLEME
-	TTF_Init();
+	////////////////IMG_Init(IMG_INIT_PNG);
+	////////////////SDL_Surface* enemy1_surface = IMG_Load("enemy1.png");
+	////////////////if (enemy1_surface == NULL) {
+	////////////////	printf("Texture olusturulamadi: %s\n", SDL_GetError());
+	////////////////	return -1;
+	////////////////}
+	////////////////SDL_Texture* enemy1_texture = SDL_CreateTextureFromSurface(renderer,enemy1_surface);
+	////////////////SDL_FreeSurface(enemy1_surface);
+	//////////////////if (enemy1_texture == NULL) {
+	//////////////////	printf("Texture olusturulamadi: %s\n", SDL_GetError());
+	//////////////////	return -1;
+	//////////////////}
 
+	////////////////if (enemy1_texture == NULL) {
+	////////////////	printf("sikintili\n");
+	////////////////}
+
+
+	///RESİM YÜKLEME
+	///yazı YÜKLEME
+	TTF_Init();
+	TTF_Font* font = TTF_OpenFont("josefin.ttf", 24); // Font dosyasının adını ve boyutunu ayarlayın
+	if (font == NULL) {
+		printf("yüklenmedi font");
+	}
+	SDL_Color white = { 222,0,222,233};
+
+	///yazı yükleme
 	enson = SDL_GetTicks();
 
 	Man man;
 	man.x = 720;
 	man.y = 410;
-	man.size = 50;
+	man.size = 35;
 	man.puan = 0;
 	man.range = 230;
 
-	Bullet mermiler[30];
-	for (int n = 0; n < 30; n++) {
+	Bullet mermiler[mermi_count];
+	for (int n = 0; n < mermi_count; n++) {
 		mermiler[n].y = 10000;
 		mermiler[n].x = 10000;
-		mermiler[n].width = 15;
-		mermiler[n].height = 15;
+		mermiler[n].width = 10;
+		mermiler[n].height = 10;
 		mermiler[n].speedx = 10;
 		mermiler[n].speedy = 10;
 		mermiler[n].biterken = 10;
@@ -417,8 +456,6 @@ int main(int argc, char* argv[]) {
 
 
 
-	window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_BORDERLESS);
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 
 	//SDL_SetWindowFullscreen(window,SDL_WINDOW_FULLSCREEN);
 
@@ -430,7 +467,7 @@ int main(int argc, char* argv[]) {
 	while (!done) {
 		done = processEvents(window, &man, &mermiler, &enemyler, hitEffect, shootEffect);
 		//render display
-		doRender(renderer, &man, &mermiler, &enemyler,&enemy1_surface);
+		doRender(renderer, &man, &mermiler, &enemyler, font, white);
 	}
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
