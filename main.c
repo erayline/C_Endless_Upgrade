@@ -1,4 +1,4 @@
-#include <SDL.h>
+﻿#include <SDL.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
@@ -86,7 +86,12 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 			case SDLK_p:
 				if (gui_state->page == 1) {
 					gui_state->page = 9;
+					break;
 				}
+				if (gui_state->page == 9) {
+					gui_state->page = 1;
+				}
+				break;
 			}
 			break;
 		
@@ -304,12 +309,12 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 
 int enson=0;
-void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, TTF_Font* font){
+void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, TTF_Font* font50){
 	
 	if (gui_state->page == 0) {
 
 		SDL_Color white = { 222,255,222,255 };
-		SDL_Surface* text_surface = TTF_RenderText_Solid(font, "Welcome to the COLLECTOR", white);
+		SDL_Surface* text_surface = TTF_RenderText_Solid(font50, "Welcome to the COLLECTOR", white);
 		SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 		SDL_Rect text_welcome = { WINDOW_WIDTH/2 - text_surface->w/2, 200 - text_surface->h/2, text_surface->w,text_surface->h };
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_welcome);
@@ -317,7 +322,7 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 		SDL_FreeSurface(text_surface);
 
 
-		text_surface = TTF_RenderText_Solid(font, "press SPACE to start ", white);
+		text_surface = TTF_RenderText_Solid(font50, "press SPACE to start ", white);
 		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 		SDL_Rect text_start = { WINDOW_WIDTH / 2 - text_surface->w / 2, 500 - text_surface->h / 2, text_surface->w,text_surface->h };
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_start);
@@ -397,9 +402,9 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 		//ekrana yazı yazdırma başlangıç
 		char puan_str[16];
 
-		sprintf_s(puan_str, sizeof(puan_str), "%d", man->puan);
-		SDL_Color white = { 222,0,222,233 };
-		SDL_Surface* text_surface = TTF_RenderText_Solid(font, puan_str, white);
+		sprintf_s(puan_str, sizeof(puan_str), "money: %d", man->puan);
+		SDL_Color white = { 22,132,22,233 };
+		SDL_Surface* text_surface = TTF_RenderText_Solid(font50, puan_str, white);
 		SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 		SDL_Rect text_rect = { WINDOW_WIDTH - 100 - text_surface->w / 2, 100 - text_surface->h / 2,text_surface->w,text_surface->h };
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_rect);
@@ -411,7 +416,7 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 	}
 	if (gui_state->page == 9) {
 		SDL_Color white = { 222,0,22,233 };
-		SDL_Surface* text_surface = TTF_RenderText_Solid(font, "Paused ", white);
+		SDL_Surface* text_surface = TTF_RenderText_Solid(font50, "Paused ", white);
 		SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 		SDL_Rect text_start = { WINDOW_WIDTH / 2 - text_surface->w / 2,  WINDOW_HEIGHT/2 -text_surface->h / 2, text_surface->w,text_surface->h };
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_start);
@@ -441,10 +446,7 @@ int main(int argc, char* argv[]) {
 	
 	///yazı YÜKLEME başlangıç
 	TTF_Init();
-	TTF_Font* font = TTF_OpenFont("josefin.ttf", 44); // Font dosyasının adını ve boyutunu ayarlayın
-	if (font == NULL) {
-		printf("yüklenmedi font");
-	}
+	TTF_Font* font50 = TTF_OpenFont("josefin.ttf", 50); // Font dosyasının adını ve boyutunu ayarlayın
 	///yazı yükleme bitiş
 
 	//enson = SDL_GetTicks();
@@ -497,7 +499,7 @@ int main(int argc, char* argv[]) {
 	while (!done) {
 		done = processEvents(window, &gui_state, &game_stats, &man, &mermiler, &enemyler, hitEffect, shootEffect);
 		//render display
-		doRender(renderer, &gui_state, &game_stats, &man, &mermiler, &enemyler, font);
+		doRender(renderer, &gui_state, &game_stats, &man, &mermiler, &enemyler, font50);
 	}
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

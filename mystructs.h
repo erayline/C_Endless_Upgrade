@@ -4,13 +4,13 @@
 #define FPS = 1
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
-#define FRAME_TARGET_TIME = (1000/FPS) //her frame kaÃ§ ms sÃ¼recek
+#define FRAME_TARGET_TIME = (1000/FPS) //her frame kaç ms sürecek
 #define enemy_count 10
 #define mermi_count 40
 #define MAP_WIDTH 3000
 #define MAP_HEIGHT 3000
 
-int enemy_start_coord[60][2] = { // enemylerin konumlarÄ±nÄ± manuel ayarlayacaÄŸÄ±m ondan for kullanmadÄ±m henÃ¼z.
+int enemy_start_coord[60][2] = { // enemylerin konumlarýný manuel ayarlayacaðým ondan for kullanmadým henüz.
 	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
 	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
 	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
