@@ -1,12 +1,14 @@
-﻿#include <SDL.h>
+#include <SDL.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <stdio.h>
-#include "mystructs.h"
 #include <conio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "mystructs.h"
+
+
 //#include <string.h>
 /*  yapılacaklar :
 	// text oluşturmayı çok kullanacağın için fonksiyon falan oluştur. (eşyalara'lere fareyi sürükleyince, bölümü yazdırırken falan)
@@ -24,10 +26,11 @@
 
 */
 
-
+int upgrade_choice = 0;
 float speed_constant;
 int last_bullet_shot=10;
 int yakinlik[enemy_count]; // bu yakınlık listesi. en sondaki eleman en yakındaki eleman oluyor.
+int last_collision_man = 0;
 
 int icindemi(int interval_left,int interval_right,int nokta_orta) {
 	//if it is in it is one
@@ -77,6 +80,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 			break;
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
+			
 			case (SDLK_ESCAPE):
 				done = 1;
 				break;
@@ -104,20 +108,35 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 	/// deneme başlangıç
 
+
+	/// deneme bitiş
+
 	if (gui_state->page == 0) {
-		int SILINECEK; //PASS SİLİNECEKKKKKKKKKKKKKKKKKKKKKKKKKKK
+
 	}
 	if (gui_state->page == 1) {
-
-
-		/// deneme bitiş
-
-
-
+		  
+		// ana karakter hasar tespit  solüst sağüst solaşağı sağaşağı
+		for (int n = 0; n < enemy_count; n++) {
+			if (  (icindemi(man->x,man->x+man->size,enemyler[n].x) && icindemi(man->y,man->y+man->size,enemyler[n].y)) || (icindemi(man->x,man->x+man->size,enemyler[n].x,enemyler[n].width) && icindemi(man->y, man->y + man->size,enemyler[n].y)) || (icindemi(man->x, man->x + man->size,enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].height )) || (icindemi(man->x, man->x + man->size,enemyler[n].x + enemyler[n].width) && (icindemi(man->y, man->y + man->size,enemyler[n].y + enemyler[n].width)))) {
+				if (1000 < SDL_GetTicks() - last_collision_man) {
+					man->life -= 1;
+					last_collision_man = SDL_GetTicks();
+					if (man->life <= 0) {
+						gui_state->page = 0;
+					}
+					
+				}
+			}
+		}
+		
+		//  2 & 3 -> 10 & 11 _>  2
+		// eğer düşmanla aynı pixeldeyse hasar alsın, ve bir saniye invincible olsun
+	 
 		int man_ortasiX = man->x + man->size / 2;
 		int man_ortasiY = man->y + man->size / 2;  // sürekli adamın ortasını bulmaya çalıştığım için kısalttım bu şekilde
-
-
+		  
+		  
 		// burada bubble sort inşa ettim sıfırdan kendim. işime yarayacak kadar çalışıyor.
 		int uzaklikSirasi[enemy_count][2];
 		int tutucuX, tutucuY, tutucuP;//pisagor
@@ -182,7 +201,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 				) {
 				for (int i = 0; i < mermi_count; i++) {
 					if (mermiler[i].life != 1) { // halihazırda ateşlenmemiş mermiyi ateşliyor
-						if (bullet_speed_interval < (SDL_GetTicks() - last_bullet_shot)) { //burada iki saniyede bir ateş etsin diye ayarlamaya çalıştım 
+						if (bullet_speed_interval - man->bullet_speed < (SDL_GetTicks() - last_bullet_shot)) { //burada iki saniyede bir ateş etsin diye ayarlamaya çalıştım 
 							if (10 < (SDL_GetTicks() - mermiler[i].biterken)) {
 								mermiler[i].x = man->x + (man->size) / 2 - (mermiler[i].width) / 2;
 								mermiler[i].y = man->y + man->size / 2 - mermiler[i].width / 2;
@@ -229,33 +248,29 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 		/// mermi fonksiyonları bitiş
 
-
+		if (man->money >= 100) {
+			gui_state->page = 8;
+		}
 
 		//enemy güncelleme başlangıç
 		// spawn olacakların sayısını tanımladığın bir değişkenin olabilir.
 		int idd = 0;
-		if (1000 < SDL_GetTicks() - last_spawn) {
+		if (100 < SDL_GetTicks() - last_spawn) {
 			printf("oldu bu iş");
 			last_spawn = SDL_GetTicks();
 
-			while (idd < 2) { // UNDER CONSTRUCTİON ŞUAN BOZUK
-				for (int n = 0; n < enemy_count; n++) {
-					if (enemyler[n].life < 1) {
-						enemyler[n].y = enemy_start_coord[n][1];
-						enemyler[n].x = enemy_start_coord[n][0];
-						enemyler[n].width = 20;
-						enemyler[n].height = 20;
-						enemyler[n].life = 1;
-						enemyler[n].speed = 70 + n * 4;
-						last_spawn = SDL_GetTicks();
-						idd++;
-					}
-				}
-				if (idd < 2) {
-					break;
+			for (int n = 0; n < enemy_count; n++) {
+				if (enemyler[n].life < 1 && idd<5) {
+					enemyler[n].y = enemy_start_coord[n%8][1];
+					enemyler[n].x = enemy_start_coord[n%8][0];
+					enemyler[n].width = 20;
+					enemyler[n].height = 20;
+					enemyler[n].life = 7;
+					enemyler[n].speed = 1000-n;
+					last_spawn = SDL_GetTicks();
+					idd++;
 				}
 			}
-
 		}
 
 
@@ -268,6 +283,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 			if (enemyler[n].life <= 0) {
 				enemyler[n].y = -1000;
 				enemyler[n].x = -1000;
+				
 			}
 			else {
 
@@ -283,18 +299,13 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 				for (int i = 0; i < mermi_count; i++) {
 					if ((((enemyler[n].x < mermiler[i].x) && (enemyler[n].x + enemyler[n].width > mermiler[i].x)) || ((enemyler[n].x < mermiler[i].x + mermiler[i].width) && (enemyler[n].x + enemyler[n].width > mermiler[i].x + mermiler[i].width))) && (((enemyler[n].y < mermiler[i].y) && (enemyler[n].y + enemyler[n].height > mermiler[i].y)) || ((enemyler[n].y < mermiler[i].y + mermiler[i].height) && (enemyler[n].y + enemyler[n].height > mermiler[i].y + mermiler[i].height)))) {
-						enemyler[n].life -= 1;
-						man->puan += 1; // mermi için collision detection
+						enemyler[n].life -= man->bullet_power;
+						if (enemyler[n].life <= 0) {
+							man->money += 1;
+						}// mermi için collision detection
 						mermiler[i].life = 0;
 						Mix_PlayChannel(-1, hitEffect, 0);
 						mermiler[i].biterken = SDL_GetTicks();
-						if (bullet_speed_interval > 50) { //// denemek için yaptım silinecek
-							bullet_speed_interval -= 1;
-							man->range += 1;
-						}
-						else {
-							bullet_speed_interval = 50;
-						}
 					}
 				}
 			}
@@ -303,6 +314,39 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 	} // bu gui'nin
 	if (gui_state->page == 9) {
 
+	}
+	if (gui_state->page == 8) { // upgrade page
+		//while (&SDL_PollEvent) {
+			SDL_Delay(20);
+			switch (event.type){
+			case SDL_KEYDOWN:
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_1:
+					man->range += 50;
+					gui_state->page = 1;
+					man->money -= 25;
+					break;
+				case SDLK_2:
+					man->bullet_speed += 25;
+					if (man->bullet_speed > 499) {
+						man->bullet_speed = 499;
+					}
+					gui_state->page = 1;
+					man->money -= 25;
+					break;
+				case SDLK_3:
+					man->bullet_power += 1;
+					gui_state->page = 1;
+					man->money -= 25;
+					break;
+				default:
+					break;
+				}
+			default:
+				break;
+			}
+		//}
 	}
 	return done;
 }
@@ -313,10 +357,10 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 	
 	if (gui_state->page == 0) {
 
-		SDL_Color white = { 222,255,222,255 };
+		SDL_Color white = { 252,215,222,255 };
 		SDL_Surface* text_surface = TTF_RenderText_Solid(font50, "Welcome to the COLLECTOR", white);
 		SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-		SDL_Rect text_welcome = { WINDOW_WIDTH/2 - text_surface->w/2, 200 - text_surface->h/2, text_surface->w,text_surface->h };
+		SDL_Rect text_welcome = { WINDOW_WIDTH/2 - text_surface->w/2, WINDOW_HEIGHT/2 -text_surface->h/2, text_surface->w,text_surface->h};
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_welcome);
 		SDL_DestroyTexture(text_texture);
 		SDL_FreeSurface(text_surface);
@@ -324,7 +368,7 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 
 		text_surface = TTF_RenderText_Solid(font50, "press SPACE to start ", white);
 		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-		SDL_Rect text_start = { WINDOW_WIDTH / 2 - text_surface->w / 2, 500 - text_surface->h / 2, text_surface->w,text_surface->h };
+		SDL_Rect text_start = { WINDOW_WIDTH/2 - text_surface->w/2, WINDOW_HEIGHT - text_surface->h - 50, text_surface->w,text_surface->h };
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_start);
 		SDL_DestroyTexture(text_texture);
 		SDL_FreeSurface(text_surface);
@@ -393,24 +437,36 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 				SDL_RenderFillRect(renderer, &enemy_1_dec[n]);
 			}
 		}// enemy katmanı bitiş
-		//ekrana resim çizdirme başlangıç
-		////////////////////SDL_Rect deneme1 = { 10,10,100,100 };
-		////////////////////SDL_Rect deneme2 = {10,10,100,100};
-		////////////////////SDL_RenderCopy(renderer, enemy1_texture, &deneme1,&rect);
-		//ekrana resim çizdirme bitiş
 
 		//ekrana yazı yazdırma başlangıç
 		char puan_str[16];
 
-		sprintf_s(puan_str, sizeof(puan_str), "money: %d", man->puan);
-		SDL_Color white = { 22,132,22,233 };
+		sprintf_s(puan_str, sizeof(puan_str), "Money: %d", man->money);
+		SDL_Color white = { 22,132,22,233 }; // para
 		SDL_Surface* text_surface = TTF_RenderText_Solid(font50, puan_str, white);
 		SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-		SDL_Rect text_rect = { WINDOW_WIDTH - 100 - text_surface->w / 2, 100 - text_surface->h / 2,text_surface->w,text_surface->h };
+		SDL_Rect text_rect = { WINDOW_WIDTH - 290, 70 - text_surface->h / 2,text_surface->w,text_surface->h };
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_rect);
 		SDL_DestroyTexture(text_texture);
 		SDL_FreeSurface(text_surface);
 
+		SDL_Color pause_color = { 252,215,222,255 }; // pause
+		text_surface = TTF_RenderText_Solid(font50, "P For Pause ", pause_color);
+		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+		SDL_Rect text_start = { 70, 70 - text_surface->h / 2, text_surface->w,text_surface->h };
+		SDL_RenderCopy(renderer, text_texture, NULL, &text_start);
+		SDL_DestroyTexture(text_texture);
+		SDL_FreeSurface(text_surface);
+
+		char can_str[16];
+		sprintf_s(can_str, sizeof(can_str), "life: %d",man->life);
+		SDL_Color can_color = { 222,32,22,233 }; // para
+		SDL_Surface* can_text_surface = TTF_RenderText_Solid(font50, can_str, can_color);
+		SDL_Texture* can_text_texture = SDL_CreateTextureFromSurface(renderer, can_text_surface);
+		SDL_Rect can_text_rect = { 30, WINDOW_HEIGHT- 30 - can_text_surface->h,can_text_surface->w,can_text_surface->h };
+		SDL_RenderCopy(renderer, can_text_texture, NULL, &can_text_rect);
+		SDL_DestroyTexture(can_text_texture);
+		SDL_FreeSurface(can_text_surface);
 		// Puanı metin olarak biçimlendirme
 
 	}
@@ -422,6 +478,42 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_start);
 		SDL_DestroyTexture(text_texture);
 		SDL_FreeSurface(text_surface);
+	}
+	if (gui_state->page == 8) {
+
+		SDL_SetRenderDrawColor(renderer, 20, 200, 100, 105);
+		SDL_Rect upgrade_back_rect = {30,WINDOW_HEIGHT/4,WINDOW_WIDTH-30,WINDOW_HEIGHT/2 };
+		SDL_RenderFillRect(renderer,&upgrade_back_rect);
+
+		SDL_Color white = { 222,0,22,233 };
+		SDL_Surface* text_surface = TTF_RenderText_Solid(font50, "UPGRADE TIME ", white);
+		SDL_Texture* text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+		SDL_Rect text_start = { WINDOW_WIDTH / 2 - text_surface->w / 2,  300, text_surface->w,text_surface->h };
+		SDL_RenderCopy(renderer, text_texture, NULL, &text_start);
+		SDL_DestroyTexture(text_texture);
+		SDL_FreeSurface(text_surface);
+
+		text_surface = TTF_RenderText_Solid(font50, "1-> range (+1) ", white);
+		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+		SDL_Rect text_up1 = { WINDOW_WIDTH / 6 - text_surface->w / 2,  520, text_surface->w,text_surface->h };
+		SDL_RenderCopy(renderer, text_texture, NULL, &text_up1);
+		SDL_DestroyTexture(text_texture);
+		SDL_FreeSurface(text_surface);
+
+		text_surface = TTF_RenderText_Solid(font50, "2-> attack speed(+1) ", white);
+		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+		SDL_Rect text_up2 = { 3*WINDOW_WIDTH / 6 - text_surface->w / 2, 520, text_surface->w,text_surface->h };
+		SDL_RenderCopy(renderer, text_texture, NULL, &text_up2);
+		SDL_DestroyTexture(text_texture);
+		SDL_FreeSurface(text_surface);
+
+		text_surface = TTF_RenderText_Solid(font50, "3-> bullet power(+1) ", white);
+		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+		SDL_Rect text_up3 = { 5*WINDOW_WIDTH / 6 - text_surface->w / 2,  520, text_surface->w,text_surface->h };
+		SDL_RenderCopy(renderer, text_texture, NULL, &text_up3);
+		SDL_DestroyTexture(text_texture);
+		SDL_FreeSurface(text_surface);
+
 	}
 	SDL_RenderPresent(renderer);
 }
@@ -455,8 +547,11 @@ int main(int argc, char* argv[]) {
 	man.y = 410;
 	man.size = 35;
 	man.puan = 0;
+	man.life = 300;
 	man.range = 230;
-
+	man.money =-100000;
+	man.bullet_power = 1;
+	man.bullet_speed = 10;
 	Bullet mermiler[mermi_count];
 	for (int n = 0; n < mermi_count; n++) {
 		mermiler[n].y = 10000;
@@ -473,8 +568,8 @@ int main(int argc, char* argv[]) {
 
 	Enemy enemyler[enemy_count];
 	for (int n = 0; n < enemy_count; n++) {
-		enemyler[n].y = enemy_start_coord[n][1];
-		enemyler[n].x = enemy_start_coord[n][0];
+		enemyler[n].y = enemy_start_coord[n%7][1];
+		enemyler[n].x = enemy_start_coord[n%7][0];
 		enemyler[n].width = 50 ;
 		enemyler[n].height = 50 ;
 		enemyler[n].life = 0;
@@ -489,7 +584,7 @@ int main(int argc, char* argv[]) {
 	gui_state.page = 0;
 
 
-	SDL_SetWindowFullscreen(window,SDL_WINDOW_FULLSCREEN);
+	//SDL_SetWindowFullscreen(window,SDL_WINDOW_FULLSCREEN);
 
 
 	Mix_Music* background = Mix_LoadWAV("sounds/backgro.wav");
