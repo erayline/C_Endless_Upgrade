@@ -7,11 +7,15 @@
 #include <stdlib.h>
 #include <math.h>
 #include "mystructs.h"
-
-
 //#include <string.h>
+
+
+
+
 /*  yapılacaklar :
-	// text oluşturmayı çok kullanacağın için fonksiyon falan oluştur. (eşyalara'lere fareyi sürükleyince, bölümü yazdırırken falan)
+	//arka plan clash of clans köyü yap.
+	//enum kullan image için araştırıp.
+	//text oluşturmayı çok kullanacağın için fonksiyon falan oluştur. (eşyalara'lere fareyi sürükleyince, bölümü yazdırırken falan)
 	//eşya oluştur sürü sürü
 	
 	yapmakta olduklarım:
@@ -19,6 +23,8 @@
 
 
    yapılanlar:
+
+
 	//ekrana yazılar yazdırmaya başla //done
 	her üç saniyede bir düşman oluşsun düşman // dalgaları oluşsun // yaptım gibi gibi, demo için yeterli
 	düşmanın her köşesini algılamıyor sol üst sağ alt algılıyor// çözdüm
@@ -26,11 +32,13 @@
 
 */
 
+
 int upgrade_choice = 0;
 float speed_constant;
 int last_bullet_shot=10;
 int yakinlik[enemy_count]; // bu yakınlık listesi. en sondaki eleman en yakındaki eleman oluyor.
 int last_collision_man = 0;
+
 
 int icindemi(int interval_left,int interval_right,int nokta_orta) {
 	//if it is in it is one
@@ -66,6 +74,9 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 	SDL_Event event;
 	float delta_time = (SDL_GetTicks() - last_frame_time) / 1000.0f; // burada fps ile ilgili ayarlar var
 	last_frame_time = SDL_GetTicks();
+
+
+
 
 	while (SDL_PollEvent(&event)) {  //klavye harektlerini detect
 
@@ -129,6 +140,42 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 				}
 			}
 		}
+
+		for (int n = 0; n < enemy_count; n++) {
+			for (int i = 0; i < enemy_count; i++) {
+
+				if (n != i) { //solüst sağüst solalt sağalt
+					int enemXR = enemyler[n].x + enemyler[n].width;
+					int enemYR = enemyler[n].y + enemyler[n].height;
+					if ((icindemi(enemyler[n].x, enemXR, enemyler[i].x)						&& icindemi(enemyler[n].y, enemYR, enemyler[i].y)) ||
+						(icindemi(enemyler[n].x, enemXR, enemyler[i].x + enemyler[i].width) && icindemi(enemyler[n].y, enemYR, enemyler[i].y)) ||
+						(icindemi(enemyler[n].x, enemXR, enemyler[i].x)						&& icindemi(enemyler[n].y, enemYR, enemyler[i].y + enemyler[i].height)) ||
+						(icindemi(enemyler[n].x, enemXR, enemyler[i].x + enemyler[i].width) && icindemi(enemyler[n].y, enemYR, enemyler[i].y + enemyler[i].height))
+						) {
+						int enemyNX = (enemyler[n].x + enemyler[n].width)	/2;
+						int enemyNY = (enemyler[n].y + enemyler[n].height)	/2;
+						int enemyIX = (enemyler[i].x + enemyler[i].width)	/2;
+						int enemyIY = (enemyler[i].y + enemyler[n].height)	/2;
+						if (enemyNX <= enemyIX) { 
+							enemyler[i].x += 40 * delta_time;
+						}
+						if (enemyNX > enemyIX) {
+							enemyler[i].x -= 40 * delta_time;
+						}
+						if (enemyNY <= enemyIY) {
+							enemyler[i].y += 40 * delta_time;
+						}
+						if (enemyIY > enemyIY) {
+							enemyler[i].y -= 40 * delta_time;
+						}
+
+
+
+					}
+				}	
+
+			}
+		}
 		
 		//  2 & 3 -> 10 & 11 _>  2
 		// eğer düşmanla aynı pixeldeyse hasar alsın, ve bir saniye invincible olsun
@@ -171,17 +218,36 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 
 		const Uint8* state = SDL_GetKeyboardState(NULL);
-		if (state[SDL_SCANCODE_RIGHT]) {
-			man->x += 400 * delta_time;
+
+		
+
+		if ((state[SDL_SCANCODE_DOWN] && state[SDL_SCANCODE_RIGHT])  || (state[SDL_SCANCODE_RIGHT] && state[SDL_SCANCODE_UP]) || (state[SDL_SCANCODE_UP] && state[SDL_SCANCODE_LEFT]) || (state[SDL_SCANCODE_LEFT] && state[SDL_SCANCODE_DOWN])) {
+			if (state[SDL_SCANCODE_RIGHT]) {
+				man->x += 280 * delta_time;
+			}
+			if (state[SDL_SCANCODE_LEFT]) {
+				man->x -= 280 * delta_time;
+			}
+			if (state[SDL_SCANCODE_UP]) {
+				man->y -= 280 * delta_time;
+			}
+			if (state[SDL_SCANCODE_DOWN]) {
+				man->y += 280 * delta_time;
+			}
 		}
-		if (state[SDL_SCANCODE_LEFT]) {
-			man->x -= 400 * delta_time;
-		}
-		if (state[SDL_SCANCODE_UP]) {
-			man->y -= 400 * delta_time;
-		}
-		if (state[SDL_SCANCODE_DOWN]) {
-			man->y += 400 * delta_time;
+		else {
+			if (state[SDL_SCANCODE_RIGHT]) {
+				man->x += 400 * delta_time;
+			}
+			if (state[SDL_SCANCODE_LEFT]) {
+				man->x -= 400 * delta_time;
+			}
+			if (state[SDL_SCANCODE_UP]) {
+				man->y -= 400 * delta_time;
+			}
+			if (state[SDL_SCANCODE_DOWN]) {
+				man->y += 400 * delta_time;
+			}
 		}
 
 		// hareket etme bitiş
@@ -222,12 +288,15 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 				mermiler[i].y -= mermiler[i].speedy;
 			}
 
+			
 
 			if (mermiler[i].y < 0 || mermiler[i].x < 0 || mermiler[i].y > WINDOW_HEIGHT || mermiler[i].x >WINDOW_WIDTH) {
 				mermiler[i].life = 0;
 				mermiler[i].biterken = SDL_GetTicks();
 			}
 		}
+
+
 
 		speed_constant = 500;
 		float diagnal = uzaklikSirasi[enemy_count - 1][0];
@@ -248,25 +317,27 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 		/// mermi fonksiyonları bitiş
 
-		if (man->money >= 100) {
-			gui_state->page = 8;
-		}
+		//if (man->money >= 100) {
+		//	gui_state->page = 8;
+		//}
 
 		//enemy güncelleme başlangıç
 		// spawn olacakların sayısını tanımladığın bir değişkenin olabilir.
 		int idd = 0;
-		if (100 < SDL_GetTicks() - last_spawn) {
+		if (3000 < SDL_GetTicks() - last_spawn) {
 			printf("oldu bu iş");
 			last_spawn = SDL_GetTicks();
 
 			for (int n = 0; n < enemy_count; n++) {
-				if (enemyler[n].life < 1 && idd<5) {
+				if (enemyler[n].life < 1 && idd<10) {
 					enemyler[n].y = enemy_start_coord[n%8][1];
 					enemyler[n].x = enemy_start_coord[n%8][0];
-					enemyler[n].width = 20;
-					enemyler[n].height = 20;
-					enemyler[n].life = 7;
-					enemyler[n].speed = 1000-n;
+					enemyler[n].width = 70;
+					enemyler[n].height = 70;
+					enemyler[n].life = 3;
+					enemyler[n].speed = 100;
+					enemyler[n].enemy1_walking_last_time = 0;
+					enemyler[n].enemy1_walking_image_width = 0;
 					last_spawn = SDL_GetTicks();
 					idd++;
 				}
@@ -301,7 +372,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 					if ((((enemyler[n].x < mermiler[i].x) && (enemyler[n].x + enemyler[n].width > mermiler[i].x)) || ((enemyler[n].x < mermiler[i].x + mermiler[i].width) && (enemyler[n].x + enemyler[n].width > mermiler[i].x + mermiler[i].width))) && (((enemyler[n].y < mermiler[i].y) && (enemyler[n].y + enemyler[n].height > mermiler[i].y)) || ((enemyler[n].y < mermiler[i].y + mermiler[i].height) && (enemyler[n].y + enemyler[n].height > mermiler[i].y + mermiler[i].height)))) {
 						enemyler[n].life -= man->bullet_power;
 						if (enemyler[n].life <= 0) {
-							man->money += 1;
+							man->money += 10;
 						}// mermi için collision detection
 						mermiler[i].life = 0;
 						Mix_PlayChannel(-1, hitEffect, 0);
@@ -311,49 +382,52 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 			}
 			//düşman güncelleme bitiş
 		}
+		SDL_Rect kamera = { 40,40,1200,800 };
 	} // bu gui'nin
+
 	if (gui_state->page == 9) {
 
 	}
-	if (gui_state->page == 8) { // upgrade page
-		//while (&SDL_PollEvent) {
-			SDL_Delay(20);
-			switch (event.type){
-			case SDL_KEYDOWN:
-				switch (event.key.keysym.sym)
-				{
-				case SDLK_1:
-					man->range += 50;
-					gui_state->page = 1;
-					man->money -= 25;
-					break;
-				case SDLK_2:
-					man->bullet_speed += 25;
-					if (man->bullet_speed > 499) {
-						man->bullet_speed = 499;
-					}
-					gui_state->page = 1;
-					man->money -= 25;
-					break;
-				case SDLK_3:
-					man->bullet_power += 1;
-					gui_state->page = 1;
-					man->money -= 25;
-					break;
-				default:
-					break;
-				}
-			default:
-				break;
-			}
-		//}
-	}
+
+	//if (gui_state->page == 8) { // upgrade page
+	//	//while (&SDL_PollEvent) {
+	//		SDL_Delay(20);
+	//		switch (event.type){
+	//		case SDL_KEYDOWN:
+	//			switch (event.key.keysym.sym)
+	//			{
+	//			case SDLK_1:
+	//				man->range += 50;
+	//				gui_state->page = 1;
+	//				man->money -= 100;
+	//				break;
+	//			case SDLK_2:
+	//				man->bullet_speed += 25;
+	//				if (man->bullet_speed > 499) {
+	//					man->bullet_speed = 499;
+	//				}
+	//				gui_state->page = 1;
+	//				man->money -= 100;
+	//				break;
+	//			case SDLK_3:
+	//				man->bullet_power += 1;
+	//				gui_state->page = 1;
+	//				man->money -= 100;
+	//				break;
+	//			default:
+	//				break;
+	//			}
+	//		default:
+	//			break;
+	//		}
+	//	//}
+	//}
 	return done;
 }
 
 
 int enson=0;
-void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, TTF_Font* font50){
+void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, TTF_Font* font50,Game_assets* game_assets){
 	
 	if (gui_state->page == 0) {
 
@@ -383,16 +457,14 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 
 
 
-
+		// protogonist çizdirme başlangıç //
 		SDL_SetRenderDrawColor(renderer, 20, 204, 84, 255);
 		SDL_Rect rect = { man->x,man->y, man->size,man->size };
 		SDL_RenderFillRect(renderer, &rect); // protogonist katmanı bitiş
 		SDL_SetRenderDrawColor(renderer, 10, 80, 30, 200);
 		SDL_Rect man_range_rect = { man->x + man->size / 2 - man->range ,man->y + man->size / 2 - man->range, man->range * 2, man->range * 2 };
 		SDL_RenderDrawRect(renderer, &man_range_rect); // protogonist menzili bitiş
-
-
-
+		// protogonist çizdirme bitiş //
 
 
 		for (int n = 0; n < mermi_count; n++) {
@@ -428,15 +500,23 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 			enemy_1_dec[n].h = enemyler[n].height - enemyler[n].height / 2;
 		}
 
-		for (int n = 0; n < enemy_count; n++) { //her düşmanı ayrı ayrı print ediyorum
+
+		//enemy print etme başlangıç
+		for (int n = 0; n < enemy_count; n++) { 
 
 			if (enemyler[n].life != 0) {
-				SDL_SetRenderDrawColor(renderer, 204, 20, 20, 255);
-				SDL_RenderFillRect(renderer, &enemy_1[n]);
-				SDL_SetRenderDrawColor(renderer, 150, 20, 20, 255);
-				SDL_RenderFillRect(renderer, &enemy_1_dec[n]);
+				if (  100 < SDL_GetTicks() - enemyler[n].enemy1_walking_last_time) {
+					enemyler[n].enemy1_walking_image_width += 150;
+					enemyler[n].enemy1_walking_last_time = SDL_GetTicks();
+					if (enemyler[n].enemy1_walking_image_width > 1050) {
+						enemyler[n].enemy1_walking_image_width = 0;
+					}
+				}
+				SDL_Rect enemy1_image_rect = { 50 + enemyler[n].enemy1_walking_image_width,50,50,50};
+				SDL_RenderCopy(renderer, game_assets->enemy1_image_texture, &enemy1_image_rect, &enemy_1[n]);
+
 			}
-		}// enemy katmanı bitiş
+		}// enemy print etme bitiş
 
 		//ekrana yazı yazdırma başlangıç
 		char puan_str[16];
@@ -468,6 +548,51 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 		SDL_DestroyTexture(can_text_texture);
 		SDL_FreeSurface(can_text_surface);
 		// Puanı metin olarak biçimlendirme
+		///////HARİTA KAYDIRMA başlangıç
+
+		const Uint8* state = SDL_GetKeyboardState(NULL);
+		int done = 0;
+		float delta_time = (SDL_GetTicks() - last_frame_time) / 1000.0f; // burada fps ile ilgili ayarlar var
+		last_frame_time = SDL_GetTicks();
+
+		// map 1 //
+		SDL_Rect map1 = { map_x,map_y,2000,2000 };
+		SDL_RenderCopy(renderer, game_assets->map_image_texture, NULL, &map1);
+		// map 1 bitiş //  
+
+		//if ((state[SDL_SCANCODE_DOWN] && state[SDL_SCANCODE_RIGHT]) || (state[SDL_SCANCODE_RIGHT] && state[SDL_SCANCODE_UP]) || (state[SDL_SCANCODE_UP] && state[SDL_SCANCODE_LEFT]) || (state[SDL_SCANCODE_LEFT] && state[SDL_SCANCODE_DOWN])) {
+		//	if (state[SDL_SCANCODE_RIGHT]) { // 280
+		//		map_x -= man->move_speed;
+		//	}
+		//	if (state[SDL_SCANCODE_LEFT]) {
+		//		map_x += man->move_speed;
+		//	}
+		//	if (state[SDL_SCANCODE_UP]) {
+		//		map_y += man->move_speed;
+		//	}
+		//	if (state[SDL_SCANCODE_DOWN]) {
+		//		map_y -= man->move_speed;
+		//	}
+		//}
+		//else {
+		//	if (state[SDL_SCANCODE_RIGHT]) { // 280
+		//		map_x -= man->move_speed;
+		//
+		//	if (state[SDL_SCANCODE_LEFT]) {
+		//		map_x += man->move_speed;
+		//	}
+		//	if (state[SDL_SCANCODE_UP]) {
+		//		map_y += man->move_speed;
+		//	}
+		//	if (state[SDL_SCANCODE_DOWN]) {
+		//		map_y -= man->move_speed;
+		//	}
+		//}
+
+
+		///////HARİTA KAYDIRMA bitiş
+
+
 
 	}
 	if (gui_state->page == 9) {
@@ -515,13 +640,16 @@ void doRender(SDL_Renderer* renderer,GUI_State* gui_state,Game_stats* game_stats
 		SDL_FreeSurface(text_surface);
 
 	}
+
+
+
 	SDL_RenderPresent(renderer);
 }
 
 
 int main(int argc, char* argv[]) {
 	SDL_Window* window;  //window tanımlama
-	window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_BORDERLESS);
+	window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT,0);
 	SDL_Renderer* renderer; //renderer tanımlama
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	
@@ -541,17 +669,20 @@ int main(int argc, char* argv[]) {
 	TTF_Font* font50 = TTF_OpenFont("josefin.ttf", 50); // Font dosyasının adını ve boyutunu ayarlayın
 	///yazı yükleme bitiş
 
+
 	//enson = SDL_GetTicks();
 	Man man;
 	man.x = 720;
 	man.y = 410;
 	man.size = 35;
 	man.puan = 0;
-	man.life = 300;
+	man.life = 30;
 	man.range = 230;
-	man.money =-100000;
+	man.money = 0;
 	man.bullet_power = 1;
 	man.bullet_speed = 10;
+	man.move_speed = 400;
+
 	Bullet mermiler[mermi_count];
 	for (int n = 0; n < mermi_count; n++) {
 		mermiler[n].y = 10000;
@@ -570,8 +701,8 @@ int main(int argc, char* argv[]) {
 	for (int n = 0; n < enemy_count; n++) {
 		enemyler[n].y = enemy_start_coord[n%7][1];
 		enemyler[n].x = enemy_start_coord[n%7][0];
-		enemyler[n].width = 50 ;
-		enemyler[n].height = 50 ;
+		enemyler[n].width = 300;
+		enemyler[n].height = 300;
 		enemyler[n].life = 0;
 		enemyler[n].speed = 70+ n*4;
 	}
@@ -584,17 +715,26 @@ int main(int argc, char* argv[]) {
 	gui_state.page = 0;
 
 
-	//SDL_SetWindowFullscreen(window,SDL_WINDOW_FULLSCREEN);
+	Game_assets game_assets;
+	SDL_Surface* map_image_surface = IMG_Load("images/map1.png"); // resim.png dosyasının adını ve yolunu düzenleyin
+	game_assets.map_image_texture = SDL_CreateTextureFromSurface(renderer, map_image_surface);
+	SDL_FreeSurface(map_image_surface);
+	SDL_Surface* enemy1_image_surface = IMG_Load("images/monster_images/Goblin/Run.png");
+	game_assets.enemy1_image_texture = SDL_CreateTextureFromSurface(renderer, enemy1_image_surface);
+	SDL_FreeSurface(enemy1_image_surface);
 
 
 	Mix_Music* background = Mix_LoadWAV("sounds/backgro.wav");
 
+
+
+
 	int done = 0;
-	Mix_PlayChannel(1, background, -1);
+	//Mix_PlayChannel(1, background, -1);
 	while (!done) {
 		done = processEvents(window, &gui_state, &game_stats, &man, &mermiler, &enemyler, hitEffect, shootEffect);
 		//render display
-		doRender(renderer, &gui_state, &game_stats, &man, &mermiler, &enemyler, font50);
+		doRender(renderer, &gui_state, &game_stats, &man, &mermiler, &enemyler, font50,&game_assets);
 	}
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
