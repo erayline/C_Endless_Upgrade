@@ -2,26 +2,27 @@
 #define STRUCTER_H
 
 #define FPS = 1
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 800
-#define FRAME_TARGET_TIME = (1000/FPS) //her frame kaç ms sürecek
-#define enemy_count 10
+#define WINDOW_WIDTH 1220 // Ã¶n ÅŸiÅŸmanlÄ± komutlarÄ±
+#define WINDOW_HEIGHT 880
+#define FRAME_TARGET_TIME = (1000/FPS) //her frame kaÃ§ ms sÃ¼recek
+#define enemy_count 100
 #define mermi_count 40
 #define MAP_WIDTH 3000
 #define MAP_HEIGHT 3000
 
-int enemy_start_coord[60][2] = { // enemylerin konumlarýný manuel ayarlayacaðým ondan for kullanmadým henüz.
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-	{10,10},{WINDOW_WIDTH - 100,10},{10,WINDOW_HEIGHT - 100},{WINDOW_WIDTH - 100,WINDOW_HEIGHT - 100},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 100},
-};
+int enemy1_walk_spreadsheet_width = 0;
+
+int last_frame_time_renderer;
+
+
+
+
+
+
+
+
+int map_x = 0;
+int map_y = 0;
 
 typedef struct {
 	int time_counter;
@@ -40,8 +41,26 @@ typedef struct {
 	int range;
 	int puan;
 	int money;
+	int bullet_power;
+	int bullet_speed;
 	char name[20];
-} Man;
+	int move_speed;
+
+	int idle_image_timer;
+	int idle_image_width_increment;
+	int run_image_timer;
+	int run_image_width_increment;
+	int attack_image_timer;
+	int attack_image_width_increment;
+	int attack_animation_time_holder;
+	int attack_direction;
+
+	int animation;
+	int direction;
+	int direction_key;
+	int y_holder;
+	int x_holder;
+}Man;
 
 typedef struct {
 	float x;
@@ -62,6 +81,18 @@ typedef struct {
 	int width;
 	int height;
 	int speed;
+	int enemy1_walking_last_time;
+	int enemy1_walking_image_width;
 }Enemy;
+
+
+
+typedef struct {
+	SDL_Texture* protogonist_texture_idle;
+	SDL_Texture* protogonist_texture_run;
+	SDL_Texture* protogonist_texture_attack;
+	SDL_Texture* map_image_texture;
+	SDL_Texture* enemy1_image_texture;
+}Game_assets;
 
 #endif
