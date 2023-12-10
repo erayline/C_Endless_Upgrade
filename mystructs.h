@@ -15,14 +15,9 @@ int enemy1_walk_spreadsheet_width = 0;
 int last_frame_time_renderer;
 
 
-
-
-
-
-
-
 int map_x = 0;
 int map_y = 0;
+
 
 typedef struct {
 	int time_counter;
@@ -36,7 +31,8 @@ typedef struct {
 
 typedef struct {
 	int x, y;
-	int life;
+	int current_life;
+	int max_life;
 	int size;
 	int range;
 	int puan;
@@ -45,6 +41,7 @@ typedef struct {
 	int bullet_speed;
 	char name[20];
 	int move_speed;
+	int attack_speed;
 
 	int idle_image_timer;
 	int idle_image_width_increment;
@@ -54,6 +51,8 @@ typedef struct {
 	int attack_image_width_increment;
 	int attack_animation_time_holder;
 	int attack_direction;
+
+
 
 	int animation;
 	int direction;
@@ -83,6 +82,12 @@ typedef struct {
 	int speed;
 	int enemy1_walking_last_time;
 	int enemy1_walking_image_width;
+
+	int animation;
+	int direction;
+	int direction_key;
+	int y_holder;
+	int x_holder;
 }Enemy;
 
 
