@@ -7,16 +7,18 @@
 #include <stdlib.h>
 #include <math.h>
 #include "mystructs.h"
+#include "items.h"
+
 //#include <string.h>
 typedef struct {
 	int enemy_start_coord[8][2]; // 8 adet düşmanın başlangıç koordinatları
 } SpawnPoints;
 
-SDL_Rect map1 = { 0,0,12000,8000 };
-
 SpawnPoints spawnpoints = {
-	{{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}, {11, 12}, {13, 14}, {15, 16}}
+	{{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}
 };
+
+SDL_Rect map1 = { 0,0,MAP_WIDTH,MAP_HEIGHT};
 
 
 SDL_Rect camera = { 0,0,WINDOW_WIDTH,WINDOW_HEIGHT };
@@ -66,6 +68,9 @@ int ilk_buyukmu(int deger1, int deger2) {
 		return 0;
 	}
 }
+
+
+
 int last_spawn = 1;
 int atack_speed = 400;
 int bullet_speed_interval = 500;
@@ -82,11 +87,17 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 	last_frame_time = SDL_GetTicks();
 
 
+	game_stats->time_counter_sec = SDL_GetTicks()/1000;
+	if (game_stats->time_counter_sec > 60) {
+		game_stats->time_counter_min = game_stats->time_counter_sec / 60;
+		game_stats->time_counter_sec = game_stats->time_counter_sec%60;
+	}
+
 	for (int n = 0; n < 8; n++) {
 
-		spawnpoints.enemy_start_coord[n][0] = 0 + n * 400;
-		spawnpoints.enemy_start_coord[n][1] = 0;
-
+		spawnpoints.enemy_start_coord[n][0] = (MAP_WIDTH / 8)*n;
+		spawnpoints.enemy_start_coord[n][1] = 30;
+	
 	}
 
 
@@ -138,15 +149,16 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 	if (gui_state->page == 0) {
 
 	}
+
 	if (gui_state->page == 1) {
 
 
-
+	
 		// ana karakter hasar tespit  solüst sağüst solaşağı sağaşağı
 		for (int n = 0; n < enemy_count; n++) {
 			if ((icindemi(man->x, man->x + man->size, enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y)) || (icindemi(man->x, man->x + man->size, enemyler[n].x, enemyler[n].width) && icindemi(man->y, man->y + man->size, enemyler[n].y)) || (icindemi(man->x, man->x + man->size, enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].height)) || (icindemi(man->x, man->x + man->size, enemyler[n].x + enemyler[n].width) && (icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].width)))) {
 				if (1000 < SDL_GetTicks() - last_collision_man) {
-					man->current_life -= 1;
+					man->current_life -= 10;
 					last_collision_man = SDL_GetTicks();
 					if (man->current_life <= 0) {
 						gui_state->page = 0;
@@ -156,6 +168,9 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 			}
 		}
 		printf("%d %d\n", man->x, man->y);
+
+
+
 
 		if (1040 < SDL_GetTicks() - man->attack_animation_time_holder) {
 
@@ -378,12 +393,13 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 
 			for (int n = 0; n < enemy_count; n++) {
-				if (enemyler[n].life < 1 && idd < 1) {
+				if (enemyler[n].current_life < 1 && idd < 10) {
 					enemyler[n].y = spawnpoints.enemy_start_coord[n % 8][1];
 					enemyler[n].x = spawnpoints.enemy_start_coord[n % 8][0];
 					enemyler[n].width = 70;
 					enemyler[n].height = 70;
-					enemyler[n].life = 3;
+					enemyler[n].current_life = 3;
+					enemyler[n].max_life = 3;
 					enemyler[n].speed = 100;
 					enemyler[n].enemy1_walking_last_time = 0;
 					enemyler[n].enemy1_walking_image_width = 0;
@@ -393,6 +409,20 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 			}
 		}
 
+		for (int n = 0; n < enemy_count; n++) {
+
+
+			if (enemyler[n].current_life != enemyler[n].max_life) {
+				enemyler[n].life_bar_active = 1;
+			}
+
+			if (enemyler[n].current_life == enemyler[n].max_life) {
+				enemyler[n].life_bar_active = 0;
+			}
+
+
+		}
+
 
 		for (int n = 0; n < enemy_count; n++) {
 
@@ -400,12 +430,12 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 			float cosforx_enem = (man_ortasiX - enemyler[n].x - enemyler[n].width / 2) / diagnal_enem;
 			float sinfory_enem = (man_ortasiY - enemyler[n].y - enemyler[n].height / 2) / diagnal_enem;
 
-			if (enemyler[n].life <= 0) {
+			if (enemyler[n].current_life <= 0) {
 				enemyler[n].y = -10000;
 				enemyler[n].x = -10000;
 			}
 			else {
-				if (enemyler[n].life != 0) { // enemylerin hızlarını ayarladığım bölüm
+				if (enemyler[n].current_life != 0) { // enemylerin hızlarını ayarladığım bölüm
 					if (enemyler[n].y + enemyler[n].height / 2 != man->y + man->size / 2) {
 						enemyler[n].y += sinfory_enem * enemyler[n].speed * delta_time;
 					}
@@ -417,8 +447,8 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 				for (int i = 0; i < mermi_count; i++) {
 					if ((((enemyler[n].x < mermiler[i].x) && (enemyler[n].x + enemyler[n].width > mermiler[i].x)) || ((enemyler[n].x < mermiler[i].x + mermiler[i].width) && (enemyler[n].x + enemyler[n].width > mermiler[i].x + mermiler[i].width))) && (((enemyler[n].y < mermiler[i].y) && (enemyler[n].y + enemyler[n].height > mermiler[i].y)) || ((enemyler[n].y < mermiler[i].y + mermiler[i].height) && (enemyler[n].y + enemyler[n].height > mermiler[i].y + mermiler[i].height)))) {
-						enemyler[n].life -= man->bullet_power;
-						if (enemyler[n].life <= 0) {
+						enemyler[n].current_life -= man->bullet_power;
+						if (enemyler[n].current_life <= 0) {
 							man->money += 10;
 						}// mermi için collision detection
 						mermiler[i].life = 0;
@@ -589,11 +619,42 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 			enemy_1[n].h = enemyler[n].height;
 		}
 
+		// bar oluşturma
+
+
+		SDL_Rect bar_rect_back[enemy_count];
+		SDL_Rect bar_rect_front[enemy_count];
+		for (int n = 0; n < enemy_count; n++) {
+
+			bar_rect_back[n].x = enemyler[n].x - camera.x;
+			bar_rect_back[n].y = enemyler[n].y - camera.y;
+			bar_rect_back[n].w = enemy_life_bar_width;
+			bar_rect_back[n].h = enemy_life_bar_height;
+
+			bar_rect_front[n].x = enemyler[n].x - camera.x + 5;
+			bar_rect_front[n].y = enemyler[n].y - camera.y + 5;
+			bar_rect_front[n].w = (enemy_life_bar_width - 10) - (enemyler[n].max_life - enemyler[n].current_life) * (enemy_life_bar_width/enemyler[n].max_life);
+			bar_rect_front[n].h = enemy_life_bar_height - 10;
+
+			
+			if ((enemyler[n].current_life > 0) && (enemyler[n].life_bar_active)) {
+
+
+
+				SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+				SDL_RenderFillRect(renderer, &bar_rect_back[n]);
+				SDL_SetRenderDrawColor(renderer, 250, 40, 40, 255);
+				SDL_RenderFillRect(renderer, &bar_rect_front[n]);
+
+			}
+
+
+		}
 
 		//enemy print etme başlangıç
 		for (int n = 0; n < enemy_count; n++) {
 
-			if (enemyler[n].life != 0) {
+			if (enemyler[n].current_life > 0) {
 
 				float diagnal_enem = sqrt(pow(man->x + man->size / 2 - enemyler[n].x - enemyler[n].width / 2, 2) + pow(man->y + man->size / 2 - enemyler[n].y - enemyler[n].width / 2, 2));
 				float cosforx_enem = (man->x + man->size / 2 - enemyler[n].x - enemyler[n].width / 2) / diagnal_enem;
@@ -621,7 +682,6 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 					SDL_Rect enemy1_image_rect = { 50 + enemyler[n].enemy1_walking_image_width,50,50,50 };
 					SDL_RenderCopyEx(renderer, game_assets->enemy1_image_texture, &enemy1_image_rect, &enemy_1[n], 0.0, NULL, SDL_FLIP_HORIZONTAL);
 				}
-
 			}
 		}// enemy print etme bitiş
 
@@ -638,6 +698,16 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		SDL_DestroyTexture(text_texture);
 		SDL_FreeSurface(text_surface);
 
+		char time_str[16];
+		sprintf_s(time_str, sizeof(time_str), "%d:%d", game_stats->time_counter_min,game_stats->time_counter_sec);
+		SDL_Color time_color = { 223,233,223,233 }; // para
+		SDL_Surface* text_surface1 = TTF_RenderText_Solid(font50, time_str, time_color);
+		SDL_Texture* text_texture1 = SDL_CreateTextureFromSurface(renderer, text_surface1);
+		SDL_Rect text_rect1 = { WINDOW_WIDTH - 90, 200 - text_surface1->h / 2,text_surface1->w,text_surface1->h };
+		SDL_RenderCopy(renderer, text_texture1, NULL, &text_rect1);
+		SDL_DestroyTexture(text_texture1);
+		SDL_FreeSurface(text_surface1);
+
 		SDL_Color pause_color = { 252,215,222,255 }; // pause
 		text_surface = TTF_RenderText_Solid(font50, "P For Pause ", pause_color);
 		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
@@ -645,18 +715,25 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_start);
 		SDL_DestroyTexture(text_texture);
 		SDL_FreeSurface(text_surface);
-
-		char can_str[16];
-		sprintf_s(can_str, sizeof(can_str), "life: %d/%d", man->current_life,man->max_life);
-		SDL_Color can_color = { 222,32,22,233 }; // para
-		SDL_Surface* can_text_surface = TTF_RenderText_Solid(font50, can_str, can_color);
-		SDL_Texture* can_text_texture = SDL_CreateTextureFromSurface(renderer, can_text_surface);
-		SDL_Rect can_text_rect = { 30, WINDOW_HEIGHT - 30 - can_text_surface->h,can_text_surface->w,can_text_surface->h };
-		SDL_RenderCopy(renderer, can_text_texture, NULL, &can_text_rect);
-		SDL_DestroyTexture(can_text_texture);
-		SDL_FreeSurface(can_text_surface);
 		// Puanı metin olarak biçimlendirme
 		///////HARİTA KAYDIRMA başlangıç
+
+		SDL_Rect life_bar_rect_back;
+		life_bar_rect_back.x = 20;
+		life_bar_rect_back.y = WINDOW_HEIGHT - 50;
+		life_bar_rect_back.w = life_bar_width;
+		life_bar_rect_back.h = life_bar_height;
+
+		SDL_Rect life_bar_rect_front;
+		life_bar_rect_front.x = 20 +10;
+		life_bar_rect_front.y = WINDOW_HEIGHT - 50 +10;
+		life_bar_rect_front.w = (life_bar_width) - (man->max_life - man->current_life) * (life_bar_width/ man->max_life)- 20;
+		life_bar_rect_front.h = life_bar_height-20;
+
+		SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+		SDL_RenderFillRect(renderer, &life_bar_rect_back);
+		SDL_SetRenderDrawColor(renderer, 250, 40, 40, 255);
+		SDL_RenderFillRect(renderer, &life_bar_rect_front);
 
 
 		float delta_time_renderer = (SDL_GetTicks() - last_frame_time_renderer) / 1000.0f; // burada fps ile ilgili ayarlar var
@@ -664,37 +741,7 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 
 		// map 1 başlangıç 
 		const Uint8* durum = SDL_GetKeyboardState(NULL);
-		//if(1){
-			//if ((durum[SDL_SCANCODE_DOWN] && durum[SDL_SCANCODE_RIGHT]) || (durum[SDL_SCANCODE_RIGHT] && durum[SDL_SCANCODE_UP]) || (durum[SDL_SCANCODE_UP] && durum[SDL_SCANCODE_LEFT]) || (durum[SDL_SCANCODE_LEFT] && durum[SDL_SCANCODE_DOWN])) {
-			//	if (durum[SDL_SCANCODE_RIGHT]) { // 280
-			//		map_x -= man->move_speed * delta_time_renderer * 0.7f;
-			//	}
-			//	if (durum[SDL_SCANCODE_LEFT]) {
-			//		map_x += man->move_speed * delta_time_renderer * 0.7f;
-			//	}
-			//	if (durum[SDL_SCANCODE_UP]) {
-			//		map_y += man->move_speed * delta_time_renderer * 0.7f;
-			//	}
-			//	if (durum[SDL_SCANCODE_DOWN]) {
-			//		map_y -= man->move_speed * delta_time_renderer * 0.7f;
-			//	}
-			//}
-
-			//else {
-			//	if (durum[SDL_SCANCODE_RIGHT]) { // 280
-			//		map_x -= man->move_speed * delta_time_renderer;
-			//	}
-			//	if (durum[SDL_SCANCODE_LEFT]) {
-			//		map_x += man->move_speed * delta_time_renderer;
-			//	}
-			//	if (durum[SDL_SCANCODE_UP]) {
-			//		map_y += man->move_speed * delta_time_renderer;
-			//	}
-			//	if (durum[SDL_SCANCODE_DOWN]) {
-			//		map_y -= man->move_speed * delta_time_renderer;
-
-			//	}
-			//}
+		
 
 			///////HARİTA KAYDIRMA bitiş
 		//}
@@ -728,20 +775,6 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		SDL_RenderCopy(renderer, text_texture, NULL, &text_up1);
 		SDL_DestroyTexture(text_texture);
 		SDL_FreeSurface(text_surface);
-
-		text_surface = TTF_RenderText_Solid(font50, "2-> attack speed(+1) ", white);
-		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-		SDL_Rect text_up2 = { 3 * WINDOW_WIDTH / 6 - text_surface->w / 2, 520, text_surface->w,text_surface->h };
-		SDL_RenderCopy(renderer, text_texture, NULL, &text_up2);
-		SDL_DestroyTexture(text_texture);
-		SDL_FreeSurface(text_surface);
-
-		text_surface = TTF_RenderText_Solid(font50, "3-> bullet power(+1) ", white);
-		text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
-		SDL_Rect text_up3 = { 5 * WINDOW_WIDTH / 6 - text_surface->w / 2,  520, text_surface->w,text_surface->h };
-		SDL_RenderCopy(renderer, text_texture, NULL, &text_up3);
-		SDL_DestroyTexture(text_texture);
-		SDL_FreeSurface(text_surface);
 	}
 
 
@@ -773,7 +806,7 @@ int main(int argc, char* argv[]) {
 
 	///yazı YÜKLEME başlangıç
 	TTF_Init();
-	TTF_Font* font50 = TTF_OpenFont("josefin.ttf", 50); // Font dosyasının adını ve boyutunu ayarlayın
+	TTF_Font* font50 = TTF_OpenFont("josefin.ttf", 38); // Font dosyasının adını ve boyutunu ayarlayın
 	///yazı yükleme bitiş
 
 
@@ -804,6 +837,7 @@ int main(int argc, char* argv[]) {
 	man.y_holder = 0;
 	
 
+	Item itemler[200];
 
 
 
@@ -828,13 +862,15 @@ int main(int argc, char* argv[]) {
 		enemyler[n].x = spawnpoints.enemy_start_coord[n % 7][0];
 		enemyler[n].width = 300;
 		enemyler[n].height = 300;
-		enemyler[n].life = 0;
+		enemyler[n].current_life = 0;
+		enemyler[n].max_life = 1;
 		enemyler[n].speed = 70 + n * 4;
 	}
 
 	Game_stats game_stats;
-	game_stats.time_counter = 0;
-	game_stats.level = 0;
+	game_stats.time_counter_min = 0;
+	game_stats.time_counter_sec = 0;
+	game_stats.state = 0;
 
 	GUI_State gui_state;
 	gui_state.page = 1;
