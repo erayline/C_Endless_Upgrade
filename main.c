@@ -8,20 +8,20 @@
 #include <math.h>
 #include "mystructs.h"
 #include "items.h"
+#include "fonks.h"
 
 //#include <string.h>
 typedef struct {
-	int enemy_start_coord[8][2]; // 8 adet düşmanın başlangıç koordinatları
+	int enemy_start_coord[16][2]; // 8 adet düşmanın başlangıç koordinatları
 } SpawnPoints;
 
 SpawnPoints spawnpoints = {
-	{{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}
+	{{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}
 };
 
 SDL_Rect map1 = { 0,0,MAP_WIDTH,MAP_HEIGHT};
 
 
-SDL_Rect camera = { 0,0,WINDOW_WIDTH,WINDOW_HEIGHT };
 
 
 /*  yapılacaklar :
@@ -38,22 +38,9 @@ SDL_Rect camera = { 0,0,WINDOW_WIDTH,WINDOW_HEIGHT };
 */
 
 
-int upgrade_choice = 0;
-float speed_constant;
-int last_bullet_shot = 10;
-int yakinlik[enemy_count]; // bu yakınlık listesi. en sondaki eleman en yakındaki eleman oluyor.
-int last_collision_man = 0;
 
 
-int icindemi(int interval_left, int interval_right, int nokta_orta) {
-	//if it is in it is one
-	if ((nokta_orta > interval_left) && (nokta_orta < interval_right)) {
-		return 1;
-	}
-	else {
-		return 0;
-	}
-}
+
 int calculate_distance(int deger1, int deger2) { // iki sayının farkının mutlağını bulan fonksiyon tanımladım uzaklık bulurken falan kullanıcam.
 	int sonuc = 0;
 	return abs(deger1 - deger2);
@@ -79,7 +66,7 @@ float bullet_x_speed = 0;
 float bullet_y_speed = 0; // burada birsürü gereksiz şey tanımlamışım bir ara azaltıcam.
 
 int animation_control_timer = 0;
-int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, Mix_Chunk* hitEffect, Mix_Chunk* shootEffect) { // burada işlemler oluyor
+int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, Mix_Chunk* hitEffect, Mix_Chunk* shootEffect, Item* itemler) { // burada işlemler oluyor
 
 	int done = 0;
 	SDL_Event event;
@@ -93,11 +80,9 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 		game_stats->time_counter_sec = game_stats->time_counter_sec%60;
 	}
 
-	for (int n = 0; n < 8; n++) {
-
-		spawnpoints.enemy_start_coord[n][0] = (MAP_WIDTH / 8)*n;
-		spawnpoints.enemy_start_coord[n][1] = 30;
-	
+	for (int n = 0; n < 16; n++) {
+		spawnpoints.enemy_start_coord[n][0] = (MAP_WIDTH / 16) * n;
+		spawnpoints.enemy_start_coord[n][1] = 50;
 	}
 
 
@@ -149,24 +134,35 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 	if (gui_state->page == 0) {
 
 	}
-
 	if (gui_state->page == 1) {
 
 
 	
 		// ana karakter hasar tespit  solüst sağüst solaşağı sağaşağı
-		for (int n = 0; n < enemy_count; n++) {
-			if ((icindemi(man->x, man->x + man->size, enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y)) || (icindemi(man->x, man->x + man->size, enemyler[n].x, enemyler[n].width) && icindemi(man->y, man->y + man->size, enemyler[n].y)) || (icindemi(man->x, man->x + man->size, enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].height)) || (icindemi(man->x, man->x + man->size, enemyler[n].x + enemyler[n].width) && (icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].width)))) {
-				if (1000 < SDL_GetTicks() - last_collision_man) {
-					man->current_life -= 10;
-					last_collision_man = SDL_GetTicks();
-					if (man->current_life <= 0) {
-						gui_state->page = 0;
-					}
+		
+		if (collision_man_enemy(man, enemyler, gui_state)) {
+			//if (1000 < SDL_GetTicks() - last_collision_man) {
+				man->current_life -= 10;
+				last_collision_man = SDL_GetTicks();
 
+				if (man->current_life <= 0) {
+					gui_state->page = 0;
 				}
-			}
+			//}
 		}
+
+		//for (int n = 0; n < enemy_count; n++) {
+		//	if ((icindemi(man->x, man->x + man->size, enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y)) || (icindemi(man->x, man->x + man->size, enemyler[n].x, enemyler[n].width) && icindemi(man->y, man->y + man->size, enemyler[n].y)) || (icindemi(man->x, man->x + man->size, enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].height)) || (icindemi(man->x, man->x + man->size, enemyler[n].x + enemyler[n].width) && (icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].width)))) {
+		//		if (1000 < SDL_GetTicks() - last_collision_man) {
+		//			man->current_life -= 10;
+		//			last_collision_man = SDL_GetTicks();
+		//			if (man->current_life <= 0) {
+		//				gui_state->page = 0;
+		//			}
+		//		}
+		//	}
+		//}
+
 		printf("%d %d\n", man->x, man->y);
 
 
@@ -190,7 +186,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 		}
 
-		//enemylerin çarpışması başlangıç
+		//enemylerin collision başlangıç
 		for (int n = 0; n < enemy_count; n++) {
 			for (int i = 0; i < enemy_count; i++) {
 
@@ -205,24 +201,30 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 						int enemyNX = (enemyler[n].x + enemyler[n].width) / 2;
 						int enemyNY = (enemyler[n].y + enemyler[n].height) / 2;
 						int enemyIX = (enemyler[i].x + enemyler[i].width) / 2;
-						int enemyIY = (enemyler[i].y + enemyler[n].height) / 2;
-						if (enemyNX <= enemyIX) {
-							enemyler[i].x += 40 * delta_time;
-						}
+						int enemyIY = (enemyler[i].y + enemyler[i].height) / 2;
 						if (enemyNX > enemyIX) {
-							enemyler[i].x -= 40 * delta_time;
+							enemyler[n].x += 60 * delta_time;
 						}
-						if (enemyNY <= enemyIY) {
-							enemyler[i].y += 40 * delta_time;
+						else{
+							enemyler[n].x -= 60 * delta_time;
 						}
-						if (enemyIY > enemyIY) {
-							enemyler[i].y -= 40 * delta_time;
+						if (enemyNY > enemyIY) {
+							enemyler[n].y += 60 * delta_time;
+						}
+						else{
+							enemyler[n].y -= 60 * delta_time;
 						}
 					}
 				}
 			}
 		}
 		//enemylerin çarpışması bitiş
+
+		//item drop başlangıç
+
+
+
+		//item drop bitiş
 
 		//  2 & 3 -> 10 & 11 _>  2
 		// eğer düşmanla aynı pixeldeyse hasar alsın, ve bir saniye invincible olsun
@@ -234,6 +236,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 		// burada bubble sort inşa ettim sıfırdan kendim. işime yarayacak kadar çalışıyor.
 		int uzaklikSirasi[enemy_count][2];
 		int tutucuX, tutucuY, tutucuP;//pisagor
+
 		for (int n = 0; n < enemy_count; n++) {    // bubble sort için uzaklıkları listede toplama
 			tutucuX = calculate_distance(man_ortasiX, enemyler[n].x + enemyler[n].width / 2);
 			tutucuY = calculate_distance(man_ortasiY, enemyler[n].y + enemyler[n].height / 2);
@@ -393,11 +396,12 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 
 			for (int n = 0; n < enemy_count; n++) {
-				if (enemyler[n].current_life < 1 && idd < 10) {
+
+				if (enemyler[n].current_life < 1 && idd < 3) {
 					enemyler[n].y = spawnpoints.enemy_start_coord[n % 8][1];
 					enemyler[n].x = spawnpoints.enemy_start_coord[n % 8][0];
-					enemyler[n].width = 70;
-					enemyler[n].height = 70;
+					enemyler[n].width = 50;
+					enemyler[n].height = 50;
 					enemyler[n].current_life = 3;
 					enemyler[n].max_life = 3;
 					enemyler[n].speed = 100;
@@ -405,6 +409,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 					enemyler[n].enemy1_walking_image_width = 0;
 					last_spawn = SDL_GetTicks();
 					idd++;
+
 				}
 			}
 		}
@@ -426,7 +431,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 		for (int n = 0; n < enemy_count; n++) {
 
-			float diagnal_enem = sqrt(pow(man_ortasiX - enemyler[n].x - enemyler[n].width / 2, 2) + pow(man_ortasiY - enemyler[n].y - enemyler[n].width / 2, 2));
+			float diagnal_enem = sqrt(pow(man_ortasiX - (enemyler[n].x + enemyler[n].width / 2), 2) + pow(man_ortasiY - (enemyler[n].y + enemyler[n].width / 2), 2));
 			float cosforx_enem = (man_ortasiX - enemyler[n].x - enemyler[n].width / 2) / diagnal_enem;
 			float sinfory_enem = (man_ortasiY - enemyler[n].y - enemyler[n].height / 2) / diagnal_enem;
 
@@ -450,7 +455,22 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 						enemyler[n].current_life -= man->bullet_power;
 						if (enemyler[n].current_life <= 0) {
 							man->money += 10;
+
+							int item_drop_kontrol = 1;
+							for (int j = 0; j < 100; j++) {
+								if (itemler[j].life == 0 && item_drop_kontrol) {
+									itemler[j].x = enemyler[n].x;
+									itemler[j].y = enemyler[n].y;
+									itemler[j].width = 50;
+									itemler[j].height = 50;
+									itemler[j].life = 1;
+									itemler[j].item_index = 1; // item index randomlaştırılacak;
+									item_drop_kontrol = 0;
+								}
+							}
+						
 						}// mermi için collision detection
+
 						mermiler[i].life = 0;
 						Mix_PlayChannel(-1, hitEffect, 0);
 						mermiler[i].biterken = SDL_GetTicks();
@@ -477,7 +497,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 ///  taşınacaklar
 /// </summary>
 int enson = 0;
-void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, TTF_Font* font50, Game_assets* game_assets) {
+void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, TTF_Font* font50, Game_assets* game_assets, Item* itemler) {
 
 	if (gui_state->page == 0) {
 
@@ -513,6 +533,8 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		SDL_RenderCopy(renderer, game_assets->map_image_texture, NULL, &map_on_screen);
 
 
+
+
 		// protogonist çizdirme başlangıç //
 
 		int enemy_start_coord[8][2] = { // enemylerin konumlarını manuel ayarlayacağım ondan for kullanmadım henüz.
@@ -521,10 +543,13 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 
 
 		if (man->animation == 1) {
+			
+
+			
+				
 			SDL_Rect player_on_screen = { man->x - man->size*3 - camera.x,man->y - man->size*3 - camera.y, 250,250};
 			SDL_Rect protogonist_image_rect = { 0 + man->idle_image_width_increment, 0, 250, 250 };
-
-
+		
 			while (100<SDL_GetTicks() - man->idle_image_timer) {
 				man->idle_image_timer = SDL_GetTicks();
 				man->idle_image_width_increment += 250;
@@ -539,7 +564,20 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 				SDL_RenderCopyEx(renderer, game_assets->protogonist_texture_idle, &protogonist_image_rect, &player_on_screen, 0.0, NULL, SDL_FLIP_HORIZONTAL);
 			}
 		}
+		SDL_Rect item_example[100];
+		for (int n = 0; n < 100; n++) {
+			if (itemler[n].life == 1) {
 
+				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+				item_example[n].x = itemler[n].x - camera.x;
+				item_example[n].y = itemler[n].y - camera.y;
+				item_example[n].w = itemler[n].width;
+				item_example[n].h = itemler[n].height;
+
+				SDL_RenderFillRect(renderer, &item_example);
+			}
+		}
 		if (man->animation == 2) {
 			SDL_Rect man_on_screen1 = { man->x - man->size * 3 - camera.x,man->y - man->size * 3 -camera.y , 250,250 };
 			SDL_Rect protogonist_image_rect1 = { 0 + man->run_image_width_increment, 0, 250, 250 };
@@ -615,8 +653,8 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		for (int n = 0; n < enemy_count; n++) {
 			enemy_1[n].x = enemyler[n].x - camera.x;
 			enemy_1[n].y = enemyler[n].y - camera.y;
-			enemy_1[n].w = enemyler[n].width;
-			enemy_1[n].h = enemyler[n].height;
+			enemy_1[n].w = enemyler[n].width*2;
+			enemy_1[n].h = enemyler[n].height*2;
 		}
 
 		// bar oluşturma
@@ -837,7 +875,7 @@ int main(int argc, char* argv[]) {
 	man.y_holder = 0;
 	
 
-	Item itemler[200];
+
 
 
 
@@ -853,6 +891,11 @@ int main(int argc, char* argv[]) {
 		mermiler[n].life = 0;
 	}
 
+
+	Item itemler[100];
+	for (int n = 0; n < 100; n++) {
+		itemler[n].life = 0;
+	}
 
 
 
@@ -907,9 +950,9 @@ int main(int argc, char* argv[]) {
 	int done = 0;
 	//Mix_PlayChannel(1, background, -1);
 	while (!done) {
-		done = processEvents(window, &gui_state, &game_stats, &man, &mermiler, &enemyler, hitEffect, shootEffect);
+		done = processEvents(window, &gui_state, &game_stats, &man, &mermiler, &enemyler, hitEffect, shootEffect, &itemler);
 		//render display
-		doRender(renderer, &gui_state, &game_stats, &man, &mermiler, &enemyler, font50, &game_assets);
+		doRender(renderer, &gui_state, &game_stats, &man, &mermiler, &enemyler, font50, &game_assets, &itemler);
 	}
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
