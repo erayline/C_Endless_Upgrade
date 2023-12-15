@@ -17,13 +17,13 @@ int CursedGlove(Man* man) { //1
 	return 1;
 }
 
-int Coockie(Man* man) { //2
+int Cookie(Man* man) { //2
 	man->current_life += 10;
 	man->max_life += 10;
 	return 1;
 }
 
-int Syringe(Man* man) { //3
+int Adrenaline(Man* man) { //3
 	man->move_speed += 10;
 	return 1;
 }
@@ -37,7 +37,12 @@ int RedTeeth(Man* man) { //4
 
 // pets
 
-
-
+int Bekmert(Man* man) {
+	return 0;
+}// rakiplerden can paketi düşürsün.
+ 
+//int Bilmem() { // hasar almasın anlamasın.
+//
+//}
 
 #endif

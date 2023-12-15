@@ -1,29 +1,31 @@
 #ifndef STRUCTER_H
 #define STRUCTER_H
 
-#define FPS = 1
-#define WINDOW_WIDTH 1920 // Ã¶n ÅŸiÅŸmanlÄ± komutlarÄ±
+#define FPS = 60
+#define WINDOW_WIDTH 1920 // ön þiþmanlý komutlarý
 #define WINDOW_HEIGHT 1080
-#define FRAME_TARGET_TIME = (1000/FPS) //her frame kaÃ§ ms sÃ¼recek
-#define enemy_count 100
+#define FRAME_TARGET_TIME = (1000/FPS) //her frame kaç ms sürecek
+#define enemy_count 30
+#define item_count (4 +1)// item adedi (artý biri silme silersen bozuluyor. oradaki dört deðiþken artý bir sabit fonksiyonda sýfýrdan baþladýðý için artý bir demek zorunda kaldýn)
 #define mermi_count 40
 #define MAP_WIDTH 12000
 #define MAP_HEIGHT 8000
 
-#define enemy_life_bar_width 80
-#define enemy_life_bar_height 20
 #define life_bar_width 380
 #define life_bar_height 40
+
+int enemy_life_bar_width = 30;
+int enemy_life_bar_height = 20;
 
 int enemy1_walk_spreadsheet_width = 0;
 
 int last_frame_time_renderer;
-SDL_Rect camera = { 0,0,WINDOW_WIDTH,WINDOW_HEIGHT };
+SDL_Rect camera = { 0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
 
-int upgrade_choice = 0;
+
 float speed_constant;
 int last_bullet_shot = 10;
-int yakinlik[enemy_count]; // bu yakÄ±nlÄ±k listesi. en sondaki eleman en yakÄ±ndaki eleman oluyor.
+int yakinlik[enemy_count]; // bu yakýnlýk listesi. en sondaki eleman en yakýndaki eleman oluyor.
 int last_collision_man = 0;
 
 
@@ -40,6 +42,12 @@ typedef struct {
 	int state;
 
 }Game_stats;
+
+typedef struct {
+	int x;
+	int y;
+}Mouse;
+Mouse mouse_position;
 
 typedef struct {
 	int page;
@@ -112,13 +120,21 @@ typedef struct {
 }Enemy;
 
 
-
 typedef struct {
 	SDL_Texture* protogonist_texture_idle;
 	SDL_Texture* protogonist_texture_run;
 	SDL_Texture* protogonist_texture_attack;
 	SDL_Texture* map_image_texture;
 	SDL_Texture* enemy1_image_texture;
+
+	SDL_Texture* item_1;
+	SDL_Texture* item_2;
+	SDL_Texture* item_3;
+	SDL_Texture* item_4;
+	SDL_Texture* item_5;
+	SDL_Texture* item_6;
+	SDL_Texture* item_7;
+
 }Game_assets;
 
 
@@ -134,6 +150,13 @@ typedef struct {
 }Item;
 
 typedef struct {
+	int CursedGlove_c;
+	int Cookie_c;
+	int Adrenaline_c;
+	int RedTeeth_c;
+}Owned_Items;
+
+typedef struct {
 	int x;
 	int y;
 	int width;
@@ -141,5 +164,13 @@ typedef struct {
 	int price;
 	int isActive;
 }Chest;
+
+Owned_Items owned_items;
+
+Man man;
+Item itemler[100];
+Enemy enemyler[enemy_count];
+Game_assets game_assets;
+
 
 #endif
