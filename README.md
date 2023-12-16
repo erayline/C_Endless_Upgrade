@@ -6,5 +6,10 @@ I used C language and SDL2 libraries.
 
 I am planning to put it on steam!
 
+first versions
 ![Some game files: ](images/in_game/alpha__0_1.png)
 ![Some game files: ](images/in_game/alpha__0_3.png)
+
+last versions
+![Some game files: ](images/in_game/alpha__0_4.png)
+![Some game files: ](images/in_game/alpha__0_5.png)
