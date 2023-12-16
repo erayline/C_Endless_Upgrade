@@ -5,10 +5,12 @@
 //#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-int icindemi(int interval_left, int interval_right, int nokta_orta) {
+#include <time.h>
+#include "items.h"
+int icindemi(float interval_left, float interval_right, float middle_point) {
 	//if it is in it is one
-	if ((nokta_orta > interval_left) && (nokta_orta < interval_right)) {
+	
+	if ((middle_point >= interval_left) && (middle_point <= interval_right)) {
 		return 1;
 	}
 	else {
@@ -16,92 +18,135 @@ int icindemi(int interval_left, int interval_right, int nokta_orta) {
 	}
 }
 
-//int openChest(Man* man, Chest* chestler, Item* itemler) {
-//
-//
-//
-//
-//}
 
-int collision_man_enemy(Man* man, Enemy* enemyler, GUI_State* gui_state) {
+int collision_man_enemy() {
+
+
 	for (int n = 0; n < enemy_count; n++) {
+		if (enemyler[n].current_life > 0) {
 
-		if ((icindemi(man->x, man->x + man->size, enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y)) || (icindemi(man->x, man->x + man->size, enemyler[n].x + enemyler[n].width) && icindemi(man->y, man->y + man->size, enemyler[n].y)) || (icindemi(man->x, man->x + man->size, enemyler[n].x) && icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].height)) || (icindemi(man->x, man->x + man->size, enemyler[n].x + enemyler[n].width) && (icindemi(man->y, man->y + man->size, enemyler[n].y + enemyler[n].width)))) {
-			return 1;
-		}
-
-		else {
-			return 0;
+			if ( 
+				(icindemi(man.x, man.x + man.size, enemyler[n].x)						&& icindemi(man.y, man.y + man.size, enemyler[n].y							)) || 
+				(icindemi(man.x, man.x + man.size, enemyler[n].x + enemyler[n].width)	&& icindemi(man.y, man.y + man.size, enemyler[n].y							)) || 
+				(icindemi(man.x, man.x + man.size, enemyler[n].x)						&& icindemi(man.y, man.y + man.size, enemyler[n].y + enemyler[n].height		)) || 
+				(icindemi(man.x, man.x + man.size, enemyler[n].x + enemyler[n].width)	&& icindemi(man.y, man.y + man.size, enemyler[n].y + enemyler[n].width		)) 
+			) {
+			
+				return 1;
+			}
 		}
 	}
+	return 0;
 }
+
 
 int collision_man_item() {
 	for (int n = 0; n < 100; n++) {
+		if (itemler[n].life == 1) {
+			if ((icindemi(man.x, man.x + man.size, itemler[n].x) && icindemi(man.y, man.y + man.size, itemler[n].y)) || (icindemi(man.x, man.x + man.size, itemler[n].x + itemler[n].width) && icindemi(man.y, man.y + man.size, itemler[n].y)) || (icindemi(man.x, man.x + man.size, itemler[n].x) && icindemi(man.y, man.y + man.size, itemler[n].y + itemler[n].height)) || (icindemi(man.x, man.x + man.size, itemler[n].x + itemler[n].width) && (icindemi(man.y, man.y + man.size, itemler[n].y + itemler[n].width)))) {
 
-		if ((icindemi(man.x, man.x + man.size, itemler[n].x) && icindemi(man.y, man.y + man.size, itemler[n].y)) || (icindemi(man.x, man.x + man.size, itemler[n].x + itemler[n].width) && icindemi(man.y, man.y + man.size, itemler[n].y)) || (icindemi(man.x, man.x + man.size, itemler[n].x) && icindemi(man.y, man.y + man.size, itemler[n].y + itemler[n].height)) || (icindemi(man.x, man.x + man.size, itemler[n].x + itemler[n].width) && (icindemi(man.y, man.y + man.size, itemler[n].y + itemler[n].width)))) {
-			switch (itemler[n].item_index)
-			{
-			case 1:
-				owned_items.CursedGlove_c++;
-				break;
-			case 2:
-				owned_items.Cookie_c++;
-				break;
-			case 3:
-				owned_items.Adrenaline_c++;
-				break;
-			case 4:
-				owned_items.RedTeeth_c++;
-				break;
+				//eþya listesi
+				for (int i = 0; i < 10; i++) {
 
-			default:
-				break;
+					if (item_index_list[i] == itemler[n].item_index) {
+						printf("aaab");
+						break;
+					}
+					if (item_index_list[i] == 0) {
+						printf("aaac");
+						item_index_list[i] = itemler[n].item_index;
+						break;
+					}
+
+				}
+
+				switch (itemler[n].item_index)
+				{
+				case 1:
+					owned_items.CursedGlove_c++;
+					break;
+				case 2:
+					owned_items.MovementFeather_c++;
+					break;
+				case 3:
+					owned_items.Cookie_c++;
+					break;
+				case 4:
+					owned_items.RedTeeth_c++;
+					break;
+
+				default:
+					break;
+				}
+				itemler[n].life = 0;
+				itemler[n].x = NULL;
+				itemler[n].y = NULL;
 			}
-			itemler[n].life = 0;
-			itemler[n].x = NULL;
-			itemler[n].y = NULL;
 		}
-
 	}
-	return 0;
+
+
+	return 1;
+}
+
+//this is the true false generator for entered number 100 for definately true.
+int drop_rate(int number) {
+	int rastgele_sayi = rand() % 100 + 1; // [1,100] it is going to return a number in this interval.
+	printf("%d\n", rastgele_sayi);
+	if (rastgele_sayi <= number) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 int drop_item(int n) {
-	int item_drop_kontrol = 1;
-
 	for (int j = 0; j < 100; j++) {
-		if (itemler[j].life == 0 && item_drop_kontrol) {
-			itemler[j].width = 30;
-			itemler[j].height = 30;
-			itemler[j].x = enemyler[n].x + enemyler[n].width/2 - itemler[j].width/2;
-			itemler[j].y = enemyler[n].y + enemyler[n].height/2 - itemler[j].height / 2;
-			itemler[j].life = 1;
-			int rastgeleIndex = rand()%item_count;
-			itemler[j].item_index = rastgeleIndex; // item index randomlaþtýrýlacak;
-			item_drop_kontrol = 0;
-
-			switch (itemler[j].item_index){
-			case 1:
-				itemler[j].item_texture = game_assets.item_1;
-				break;
-			case 2:
-				itemler[j].item_texture = game_assets.item_2;
-			default:
-				break;}
-
+		if (itemler[j].life == 0) {
+			if (drop_rate(40)) {
+				itemler[j].width = 20;
+				itemler[j].height = 20;
+				itemler[j].x = enemyler[n].x + enemyler[n].width/2 - itemler[j].width/2;
+				itemler[j].y = enemyler[n].y + enemyler[n].height/2 - itemler[j].height / 2;
+				itemler[j].life = 1;
+				int rastgeleIndex = rand()%item_count;
+				itemler[j].item_index = rastgeleIndex; // item index randomlaþtýrýlacak;
+				switch (itemler[j].item_index){
+				case 1:
+					itemler[j].item_texture = game_assets.item_1;
+					break;
+				case 2:
+					itemler[j].item_texture = game_assets.item_2;
+				default:
+					break;}
+			}
+			break;
 		}
 	}
 	return 0;
 }
+
 
 
 
 int upgrade_protog() {
+	// move speed;
 	man.move_speed = 200;
-	man.move_speed += owned_items.Adrenaline_c * 30;
+	man.move_speed += owned_items.MovementFeather_c * 30;
 
+	// attack speed
+	//CursedGlove();
+	if (owned_items.CursedGlove_c != cursed_glove_counter) {
 
+		man.attack_speed = man.attack_speed + 0.3f;
+
+		attack_speed_while_loop = 500 / man.attack_speed;
+
+		cursed_glove_counter++;
+	}
+
+	//max life
 	man.max_life = 100;
 	man.max_life += owned_items.Cookie_c * 5;
 
@@ -110,9 +155,20 @@ int upgrade_protog() {
 }
 
 
+int calculate_distance(int deger1, int deger2) { // iki sayýnýn farkýnýn mutlaðýný bulan fonksiyon tanýmladým uzaklýk bulurken falan kullanýcam.
+	int sonuc = 0;
+	return abs(deger1 - deger2);
+}
 
 
-
+int ilk_buyukmu(int deger1, int deger2) {
+	if (deger1 >= deger2) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
 //int alan() { // deðiþecek
 //	for (int n = 0; n < enemy_count; n++) { //burada range içine giren eleman olursa ateþ etsin diye ayarladým
 //
@@ -147,6 +203,38 @@ int upgrade_protog() {
 //		}
 //	}
 //}
+
+
+///////// bubble sort yaptýðýn yer ama selection sort'a çevireceksin zaten bunu.
+		// burada bubble sort inþa ettim sýfýrdan kendim. iþime yarayacak kadar çalýþýyor.
+//int uzaklikSirasi[enemy_count][2];
+//int tutucuX, tutucuY, tutucuP;//pisagor
+//for (int n = 0; n < enemy_count; n++) {    // bubble sort için uzaklýklarý listede toplama
+//	tutucuX = calculate_distance(man_ortasiX, enemyler[n].x + enemyler[n].width / 2);
+//	tutucuY = calculate_distance(man_ortasiY, enemyler[n].y + enemyler[n].height / 2);
+
+//	tutucuP = sqrt(tutucuX * tutucuX + tutucuY * tutucuY);
+//	uzaklikSirasi[n][0] = tutucuP;
+//	uzaklikSirasi[n][1] = n;
+//}
+
+//int tutucu2;
+//int tutucu2_n;
+//for (int n = 0; n < enemy_count - 1; n++) { // bubblesortun kendisi
+
+//	if (!(ilk_buyukmu(uzaklikSirasi[n][0], uzaklikSirasi[n + 1][0]))) {
+//		tutucu2 = uzaklikSirasi[n][0];
+//		tutucu2_n = uzaklikSirasi[n][1];
+
+//		uzaklikSirasi[n][0] = uzaklikSirasi[n + 1][0];
+//		uzaklikSirasi[n][1] = uzaklikSirasi[n + 1][1];
+
+//		uzaklikSirasi[n + 1][0] = tutucu2;
+//		uzaklikSirasi[n + 1][1] = tutucu2_n;
+//	}
+//}
+//int closest_enemy_index = uzaklikSirasi[enemy_count - 1][1]; // en yakýn enemy
+
 
 
 #endif

@@ -12,8 +12,20 @@
 
 // stat increasing items
 
-int CursedGlove(Man* man) { //1
-	man->attack_speed += 10;
+int cursed_glove_counter = 0;
+int attack_speed_while_loop = 500;
+
+int CursedGlove() { //1
+
+	if (owned_items.CursedGlove_c != cursed_glove_counter) {
+
+		man.attack_speed = man.attack_speed + 0.3f;
+		
+		attack_speed_while_loop = 500 / man.attack_speed;
+
+		cursed_glove_counter++;
+	}
+
 	return 1;
 }
 

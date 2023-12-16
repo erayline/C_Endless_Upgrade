@@ -5,8 +5,7 @@
 #define WINDOW_WIDTH 1920 // ön þiþmanlý komutlarý
 #define WINDOW_HEIGHT 1080
 #define FRAME_TARGET_TIME = (1000/FPS) //her frame kaç ms sürecek
-#define enemy_count 30
-#define item_count (4 +1)// item adedi (artý biri silme silersen bozuluyor. oradaki dört deðiþken artý bir sabit fonksiyonda sýfýrdan baþladýðý için artý bir demek zorunda kaldýn)
+#define enemy_count 100
 #define mermi_count 40
 #define MAP_WIDTH 12000
 #define MAP_HEIGHT 8000
@@ -14,6 +13,7 @@
 #define life_bar_width 380
 #define life_bar_height 40
 
+#define item_count (2 +1)// item adedi (artý biri silme silersen bozuluyor. oradaki dört deðiþken artý bir sabit fonksiyonda sýfýrdan baþladýðý için artý bir demek zorunda kaldýn)
 int enemy_life_bar_width = 30;
 int enemy_life_bar_height = 20;
 
@@ -22,6 +22,7 @@ int enemy1_walk_spreadsheet_width = 0;
 int last_frame_time_renderer;
 SDL_Rect camera = { 0,0,WINDOW_WIDTH,WINDOW_HEIGHT};
 
+float max_attack_speed = 500;
 
 float speed_constant;
 int last_bullet_shot = 10;
@@ -33,6 +34,23 @@ int last_collision_man = 0;
 int map_x = 0;
 int map_y = 0;
 
+int item_index_list[10] = {0,0,0,0,0,0,0,0,0,0};
+int item_bar_x_y_list[10][2] = {
+	{40,230},
+	{130,230},
+	{30,300},
+	{110,300},
+	{30,370},
+	{100,370},
+	{30,230},
+	{100,230},
+	{30,230},
+	{100,230}
+};
+SDL_Texture* bastirilacak_item;
+
+
+int collision_kontrol_counter = 0;
 
 typedef struct {
 
@@ -61,11 +79,11 @@ typedef struct {
 	int puan;
 	int money;
 
-	int current_life;
-	int max_life;
+	float current_life;
+	float max_life;
 	int bullet_power;
 	int bullet_speed;
-	int attack_speed;
+	float attack_speed;
 	int move_speed;
 
 	int idle_image_timer;
@@ -98,19 +116,22 @@ typedef struct {
 }Bullet;
 
 typedef struct {
-	float x;
-	float y;
+	float x,y;
 	int color;
 
 	int max_life;
 	int current_life;
 	int life_bar_active;
 
+	int spiece;
+
 	int width;
 	int height;
 	int speed;
-	int enemy1_walking_last_time;
+	int enemy_walking_last_time;
+
 	int enemy1_walking_image_width;
+	int enemy2_walking_image_width;
 
 	int animation;
 	int direction;
@@ -124,8 +145,12 @@ typedef struct {
 	SDL_Texture* protogonist_texture_idle;
 	SDL_Texture* protogonist_texture_run;
 	SDL_Texture* protogonist_texture_attack;
+
 	SDL_Texture* map_image_texture;
-	SDL_Texture* enemy1_image_texture;
+	SDL_Texture* enemy1_run_image_texture;
+	SDL_Texture* enemy2_run_image_texture;
+
+	SDL_Texture* enemy2_image_texture;
 
 	SDL_Texture* item_1;
 	SDL_Texture* item_2;
@@ -152,7 +177,7 @@ typedef struct {
 typedef struct {
 	int CursedGlove_c;
 	int Cookie_c;
-	int Adrenaline_c;
+	int MovementFeather_c;
 	int RedTeeth_c;
 }Owned_Items;
 
