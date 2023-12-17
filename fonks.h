@@ -44,16 +44,14 @@ int collision_man_item() {
 	for (int n = 0; n < 100; n++) {
 		if (itemler[n].life == 1) {
 			if ((icindemi(man.x, man.x + man.size, itemler[n].x) && icindemi(man.y, man.y + man.size, itemler[n].y)) || (icindemi(man.x, man.x + man.size, itemler[n].x + itemler[n].width) && icindemi(man.y, man.y + man.size, itemler[n].y)) || (icindemi(man.x, man.x + man.size, itemler[n].x) && icindemi(man.y, man.y + man.size, itemler[n].y + itemler[n].height)) || (icindemi(man.x, man.x + man.size, itemler[n].x + itemler[n].width) && (icindemi(man.y, man.y + man.size, itemler[n].y + itemler[n].width)))) {
-
-				//eşya listesi
+				
+				//eÅŸya listesi
 				for (int i = 0; i < 10; i++) {
 
 					if (item_index_list[i] == itemler[n].item_index) {
-						printf("aaab");
 						break;
 					}
 					if (item_index_list[i] == 0) {
-						printf("aaac");
 						item_index_list[i] = itemler[n].item_index;
 						break;
 					}
@@ -69,7 +67,7 @@ int collision_man_item() {
 					owned_items.MovementFeather_c++;
 					break;
 				case 3:
-					owned_items.Cookie_c++;
+					owned_items.LifeReminder_c++;
 					break;
 				case 4:
 					owned_items.RedTeeth_c++;
@@ -92,7 +90,6 @@ int collision_man_item() {
 //this is the true false generator for entered number 100 for definately true.
 int drop_rate(int number) {
 	int rastgele_sayi = rand() % 100 + 1; // [1,100] it is going to return a number in this interval.
-	printf("%d\n", rastgele_sayi);
 	if (rastgele_sayi <= number) {
 		return 1;
 	}
@@ -111,13 +108,17 @@ int drop_item(int n) {
 				itemler[j].y = enemyler[n].y + enemyler[n].height/2 - itemler[j].height / 2;
 				itemler[j].life = 1;
 				int rastgeleIndex = rand()%item_count;
-				itemler[j].item_index = rastgeleIndex; // item index randomlaştırılacak;
+				itemler[j].item_index = rastgeleIndex; // item index randomlaÅŸtÄ±rÄ±lacak;
 				switch (itemler[j].item_index){
 				case 1:
 					itemler[j].item_texture = game_assets.item_1;
 					break;
 				case 2:
 					itemler[j].item_texture = game_assets.item_2;
+					break;
+				case 3:
+					itemler[j].item_texture = game_assets.item_3;
+					break;
 				default:
 					break;}
 			}
@@ -128,34 +129,23 @@ int drop_item(int n) {
 }
 
 
-
-
-int upgrade_protog() {
-	// move speed;
-	man.move_speed = 200;
+								
+								
+int upgrade_protog() {			
+	// move speed;				
+	man.move_speed = 200;		
 	man.move_speed += owned_items.MovementFeather_c * 30;
-
-	// attack speed
-	//CursedGlove();
-	if (owned_items.CursedGlove_c != cursed_glove_counter) {
-
-		man.attack_speed = man.attack_speed + 0.3f;
-
-		attack_speed_while_loop = 500 / man.attack_speed;
-
-		cursed_glove_counter++;
-	}
-
-	//max life
-	man.max_life = 100;
-	man.max_life += owned_items.Cookie_c * 5;
-
+								
+								
+	// attack speed				
+	CursedGlove();
+	LifeReminder();
 
 	return 0;
 }
 
 
-int calculate_distance(int deger1, int deger2) { // iki sayının farkının mutlağını bulan fonksiyon tanımladım uzaklık bulurken falan kullanıcam.
+int calculate_distance(int deger1, int deger2) { // iki sayÄ±nÄ±n farkÄ±nÄ±n mutlaÄŸÄ±nÄ± bulan fonksiyon tanÄ±mladÄ±m uzaklÄ±k bulurken falan kullanÄ±cam.
 	int sonuc = 0;
 	return abs(deger1 - deger2);
 }
@@ -169,8 +159,8 @@ int ilk_buyukmu(int deger1, int deger2) {
 		return 0;
 	}
 }
-//int alan() { // değişecek
-//	for (int n = 0; n < enemy_count; n++) { //burada range içine giren eleman olursa ateş etsin diye ayarladım
+//int alan() { // deÄŸiÅŸecek
+//	for (int n = 0; n < enemy_count; n++) { //burada range iÃ§ine giren eleman olursa ateÅŸ etsin diye ayarladÄ±m
 //
 //		if ((icindemi(man->x - man->range, man->x + man->size + man->range, enemyler[n].x) && icindemi(man->y - man->range, man->y + man->size + man->range, enemyler[n].y)) ||
 //			(icindemi(man->x - man->range, man->x + man->size + man->range, enemyler[n].x) && icindemi(man->y - man->range, man->y + man->size + man->range, enemyler[n].y + enemyler[n].height)) ||
@@ -178,8 +168,8 @@ int ilk_buyukmu(int deger1, int deger2) {
 //			(icindemi(man->x - man->range, man->x + man->size + man->range, enemyler[n].x + enemyler[n].width) && icindemi(man->y - man->range, man->y + man->size + man->range, enemyler[n].y + enemyler[n].height))
 //			) {
 //			for (int i = 0; i < mermi_count; i++) {
-//				if (mermiler[i].life != 1) { // halihazırda ateşlenmemiş mermiyi ateşliyor
-//					if (bullet_speed_interval - man->bullet_speed < (SDL_GetTicks() - last_bullet_shot)) { //burada iki saniyede bir ateş etsin diye ayarlamaya çalıştım 
+//				if (mermiler[i].life != 1) { // halihazÄ±rda ateÅŸlenmemiÅŸ mermiyi ateÅŸliyor
+//					if (bullet_speed_interval - man->bullet_speed < (SDL_GetTicks() - last_bullet_shot)) { //burada iki saniyede bir ateÅŸ etsin diye ayarlamaya Ã§alÄ±ÅŸtÄ±m 
 //						if (10 < (SDL_GetTicks() - mermiler[i].biterken)) {
 //							mermiler[i].x = man->x + (man->size) / 2 - (mermiler[i].width) / 2;
 //							mermiler[i].y = man->y + man->size / 2 - mermiler[i].height / 2;
@@ -205,11 +195,11 @@ int ilk_buyukmu(int deger1, int deger2) {
 //}
 
 
-///////// bubble sort yaptığın yer ama selection sort'a çevireceksin zaten bunu.
-		// burada bubble sort inşa ettim sıfırdan kendim. işime yarayacak kadar çalışıyor.
+///////// bubble sort yaptÄ±ÄŸÄ±n yer ama selection sort'a Ã§evireceksin zaten bunu.
+		// burada bubble sort inÅŸa ettim sÄ±fÄ±rdan kendim. iÅŸime yarayacak kadar Ã§alÄ±ÅŸÄ±yor.
 //int uzaklikSirasi[enemy_count][2];
 //int tutucuX, tutucuY, tutucuP;//pisagor
-//for (int n = 0; n < enemy_count; n++) {    // bubble sort için uzaklıkları listede toplama
+//for (int n = 0; n < enemy_count; n++) {    // bubble sort iÃ§in uzaklÄ±klarÄ± listede toplama
 //	tutucuX = calculate_distance(man_ortasiX, enemyler[n].x + enemyler[n].width / 2);
 //	tutucuY = calculate_distance(man_ortasiY, enemyler[n].y + enemyler[n].height / 2);
 
@@ -233,7 +223,7 @@ int ilk_buyukmu(int deger1, int deger2) {
 //		uzaklikSirasi[n + 1][1] = tutucu2_n;
 //	}
 //}
-//int closest_enemy_index = uzaklikSirasi[enemy_count - 1][1]; // en yakın enemy
+//int closest_enemy_index = uzaklikSirasi[enemy_count - 1][1]; // en yakÄ±n enemy
 
 
 
