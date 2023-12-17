@@ -1,4 +1,4 @@
-﻿#include <SDL.h>
+#include <SDL.h>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
@@ -85,9 +85,11 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 				done = 1;
 				break;
 			case SDLK_SPACE: //denemek için
-				man->current_life = 100;
+				man->current_life = man->max_life;
 				gui_state->page = 1;
-
+				break;
+			case SDLK_TAB:
+				item_bar_active = 1;
 				break;
 			case SDLK_p:
 				if (gui_state->page == 1) {
@@ -100,7 +102,17 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 				break;
 			}
 			break;
+		case SDL_KEYUP:
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_TAB:
+				item_bar_active = 0;
+				break;
 
+			default:
+				break;
+			}
+			break;
 		case SDL_QUIT:
 			SDL_DestroyWindow(window);
 			break;
@@ -181,11 +193,6 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 
 		collision_man_item();
-
-		for (int i = 0; i < 10; i++) {
-			printf("%d ", item_index_list[i]);
-		}
-		printf("\n");
 
 		// hareket etme başlanıgç
 
@@ -308,7 +315,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 			// enemy born
 			for (int n = 0; n < enemy_count; n++) {
 
-				if (enemyler[n].current_life < 1 && idd < 10) {
+				if (enemyler[n].current_life < 1 && idd < 70) {
 					enemyler[n].y = spawnpoints.enemy_start_coord[n % 16][1];
 					enemyler[n].x = spawnpoints.enemy_start_coord[n % 16][0];
 					enemyler[n].width = 100;
@@ -329,13 +336,13 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 						enemyler[n].max_life = 5;
 						enemyler[n].current_life = enemyler[n].max_life;
 					}
-					//if (n % 35 == 0) {
-					//	enemyler[n].speed = 50;
-					//	enemyler[n].width = 400;
-					//	enemyler[n].height = 400;
-					//	enemyler[n].max_life =10;
-					//	enemyler[n].current_life = enemyler[n].max_life;
-					//}
+					if (n % 50 == 0) {
+						enemyler[n].speed = 50;
+						enemyler[n].width = 500;
+						enemyler[n].height = 500;
+						enemyler[n].max_life =10;
+						enemyler[n].current_life = enemyler[n].max_life;
+					}
 					enemyler[n].enemy_walking_last_time = 0;
 					enemyler[n].enemy1_walking_image_width = 0;
 					enemyler[n].enemy2_walking_image_width = 0;
@@ -369,15 +376,19 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 						int enemyIY = (enemyler[i].y + enemyler[i].height) / 2;
 						if (enemyNX > enemyIX) {
 							enemyler[n].x += 60 * delta_time;
+							enemyler[i].x -= 60 * delta_time;
 						}
 						else {
 							enemyler[n].x -= 60 * delta_time;
+							enemyler[i].x += 60 * delta_time;
 						}
 						if (enemyNY > enemyIY) {
 							enemyler[n].y += 60 * delta_time;
+							enemyler[i].y -= 60 * delta_time;
 						}
 						else {
 							enemyler[n].y -= 60 * delta_time;
+							enemyler[i].y += 60 * delta_time;
 						}
 					}
 				}
@@ -437,10 +448,6 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 		camera.y = man->y + man->size / 2 - (camera.h / 2);
 
 	} // bu gui'nin
-
-	if (gui_state->page == 9) {
-
-	}
 
 	return done;
 }
@@ -701,34 +708,33 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 			}
 		}// enemy print etme bitiş
 
-		SDL_SetRenderDrawColor(renderer, 80, 10, 70,0);
-		SDL_Rect left_items_bar = { 20,200,200,WINDOW_HEIGHT/1.5f};
-		SDL_RenderFillRect(renderer, &left_items_bar);
-
-
-
-		SDL_Rect left_items_bar_items[10];
-		for (int n = 0; n < 10; n++) {
-			if (item_index_list[n] != 0) {
-				left_items_bar_items[n].x = item_bar_x_y_list[n][0];
-				left_items_bar_items[n].y = item_bar_x_y_list[n][1];
-				left_items_bar_items[n].w = 60;
-				left_items_bar_items[n].h = 60;
-				switch (item_index_list[n])
-				{
-				case 1:
-					bastirilacak_item = game_assets->item_1;
-					break;
-				case 2:
-					bastirilacak_item = game_assets->item_2;
-					break;
-				case 3:
-					bastirilacak_item = game_assets->item_3;
-					break;
-				default:
-					break;
+		if (item_bar_active) {
+			SDL_SetRenderDrawColor(renderer, 180, 200, 170, 0);
+			SDL_Rect left_items_bar = { 20,200,200,WINDOW_HEIGHT / 1.5f };
+			SDL_RenderFillRect(renderer, &left_items_bar);
+			SDL_Rect left_items_bar_items[10];
+			for (int n = 0; n < 10; n++) {
+				if (item_index_list[n] != 0) {
+					left_items_bar_items[n].x = item_bar_x_y_list[n][0];
+					left_items_bar_items[n].y = item_bar_x_y_list[n][1];
+					left_items_bar_items[n].w = 60;
+					left_items_bar_items[n].h = 60;
+					switch (item_index_list[n])
+					{
+					case 1:
+						bastirilacak_item = game_assets->item_1;
+						break;
+					case 2:
+						bastirilacak_item = game_assets->item_2;
+						break;
+					case 3:
+						bastirilacak_item = game_assets->item_3;
+						break;
+					default:
+						break;
+					}
+					SDL_RenderCopy(renderer, bastirilacak_item, NULL, &left_items_bar_items[n]);
 				}
-				SDL_RenderCopy(renderer, bastirilacak_item, NULL, &left_items_bar_items[n]);
 			}
 		}
 
@@ -753,6 +759,8 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		SDL_RenderCopy(renderer, text_texture1, NULL, &text_rect1);
 		SDL_DestroyTexture(text_texture1);
 		SDL_FreeSurface(text_surface1);
+
+
 
 		SDL_Color pause_color = { 252,215,222,255 }; // pause
 		text_surface = TTF_RenderText_Solid(font50, "P For Pause ", pause_color);
@@ -784,6 +792,15 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		SDL_SetRenderDrawColor(renderer, 250, 40, 40, 255);
 		SDL_RenderFillRect(renderer, &life_bar_rect_front);
 
+		char life_bar_str[20];
+		sprintf_s(life_bar_str, sizeof(life_bar_str), "%d/%d", man->max_life, man->current_life);
+		SDL_Color life_bar_color = { 3,3,3,3 }; // para
+		text_surface1 = TTF_RenderText_Solid(font50, life_bar_str, life_bar_color);
+		text_texture1 = SDL_CreateTextureFromSurface(renderer, text_surface1);
+		SDL_Rect text_rect3 = { 20 + 10, WINDOW_HEIGHT - 50 + 10,text_surface1->w,text_surface1->h /1.5f};
+		SDL_RenderCopy(renderer, text_texture1, NULL, &text_rect3);
+		SDL_DestroyTexture(text_texture1);
+		SDL_FreeSurface(text_surface1);
 
 		float delta_time_renderer = (SDL_GetTicks() - last_frame_time_renderer) / 1000.0f; // burada fps ile ilgili ayarlar var
 		last_frame_time_renderer = SDL_GetTicks();
@@ -945,13 +962,18 @@ int main(int argc, char* argv[]) {
 	SDL_FreeSurface(protogonist_image_surface3);
 
 
+
 	SDL_Surface* lux_avize = IMG_Load("images/items/item_01.png");
 	game_assets.item_1 = SDL_CreateTextureFromSurface(renderer, lux_avize);
 	SDL_FreeSurface(lux_avize);
+
 	SDL_Surface* wizard_hat = IMG_Load("images/items/item_02.png");
 	game_assets.item_2 = SDL_CreateTextureFromSurface(renderer, wizard_hat);
 	SDL_FreeSurface(wizard_hat);
 
+	SDL_Surface* life_reminder = IMG_Load("images/items/item_03.png");
+	game_assets.item_3 = SDL_CreateTextureFromSurface(renderer, life_reminder);
+	SDL_FreeSurface(life_reminder);
 
 	Mix_Music* background = Mix_LoadWAV("sounds/backgro.wav");
 
