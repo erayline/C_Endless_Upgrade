@@ -13,25 +13,23 @@
 // stat increasing items
 
 int cursed_glove_counter = 0;
+int life_reminder_counter = 0;
 int attack_speed_while_loop = 500;
 
-int CursedGlove() { //1
-
+void CursedGlove() { //1
 	if (owned_items.CursedGlove_c != cursed_glove_counter) {
-
 		man.attack_speed = man.attack_speed + 0.3f;
-		
 		attack_speed_while_loop = 500 / man.attack_speed;
-
 		cursed_glove_counter++;
 	}
-
-	return 1;
 }
 
-int Cookie(Man* man) { //2
-	man->current_life += 10;
-	man->max_life += 10;
+int LifeReminder() { //2
+	if (owned_items.LifeReminder_c != life_reminder_counter) {
+		man.current_life += 10;
+		man.max_life += 10;
+		life_reminder_counter++;
+	}
 	return 1;
 }
 
@@ -51,9 +49,9 @@ int RedTeeth(Man* man) { //4
 
 int Bekmert(Man* man) {
 	return 0;
-}// rakiplerden can paketi düşürsün.
+}// rakiplerden can paketi dÃ¼ÅŸÃ¼rsÃ¼n.
  
-//int Bilmem() { // hasar almasın anlamasın.
+//int Bilmem() { // hasar almasÄ±n anlamasÄ±n.
 //
 //}
 
