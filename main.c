@@ -38,7 +38,8 @@ int bullet_speed_interval = 500;
 int last_frame_time = 0;
 float bullet_x_speed = 0;
 float bullet_y_speed = 0; // burada birsürü gereksiz şey tanımlamışım bir ara azaltıcam.
-int isPressed = 0;
+int isPressed_left = 0;
+int isPressed_right = 0;
 int animation_control_timer = 0;
 int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, Mix_Chunk* hitEffect, Mix_Chunk* shootEffect, Item* itemler) { // burada işlemler oluyor
 
@@ -68,13 +69,21 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 		
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button == SDL_BUTTON_LEFT) {
-				isPressed = 1;
+				isPressed_left = 1;
+				break;
+			}
+			if (event.button.button == SDL_BUTTON_RIGHT) {
+				isPressed_right = 1;
 				break;
 			}
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button == SDL_BUTTON_LEFT) {
-				isPressed = 0;
+				isPressed_left = 0;
+				break;
+			}
+			if (event.button.button == SDL_BUTTON_RIGHT) {
+				isPressed_right = 0;
 				break;
 			}
 			break;
@@ -243,7 +252,7 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 
 
 		
-		if (isPressed) {
+		if (isPressed_left) {
 			for (int i = 0; i < mermi_count; i++) {
 				if (mermiler[i].life != 1) { // halihazırda ateşlenmemiş mermiyi ateşliyor
 					if (attack_speed_while_loop < (SDL_GetTicks() - last_bullet_shot) ) { //burada iki saniyede bir ateş etsin diye ayarlamaya çalıştım 
@@ -267,10 +276,34 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 							}
 						}
 					}
-
 				}
 			}
 		}
+
+		// bu kısım sağ tuşta bulunan yetenek olacak.
+		//if (isPressed_left) { 
+		//	for (int i = 0; i < mermi_count; i++) {
+		//		if (mermiler[i].life != 1) { // halihazırda ateşlenmemiş mermiyi ateşliyor
+		//			if (attack_speed_while_loop < (SDL_GetTicks() - last_bullet_shot)) { //burada iki saniyede bir ateş etsin diye ayarlamaya çalıştım 
+		//				if (10 < (SDL_GetTicks() - mermiler[i].biterken)) {
+		//					mermiler[i].x = man->x + (man->size) / 2 - (mermiler[i].width) / 2;
+		//					mermiler[i].y = man->y + man->size / 2 - mermiler[i].height / 2;
+		//					mermiler[i].life = 1;
+		//					Mix_PlayChannel(3, shootEffect, 0);
+		//					last_bullet_shot = SDL_GetTicks();
+		//					man->animation = 3;
+		//					man->attack_animation_time_holder = SDL_GetTicks();
+		//					if (man_ortasiX < mouse_position.x + camera.x) {
+		//						man->attack_direction = 1;
+		//					}
+		//					else {
+		//						man->attack_direction = 0;
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 
 
 
