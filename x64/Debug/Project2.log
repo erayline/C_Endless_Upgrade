@@ -1,0 +1,199 @@
+﻿  items.h
+D:\vs\projects\Project2\Project2\items.h(22,33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  main.c
+D:\vs\projects\Project2\Project2\items.h(22,33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(29,18): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(29,28): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(29,75): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(29,85): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(30,18): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(30,28): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(30,90): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(30,100): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(31,18): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(31,28): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(31,75): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(31,85): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(32,18): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(32,28): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(32,90): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(32,100): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,21): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,31): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,53): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,72): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,82): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,104): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,125): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,135): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,160): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,195): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,205): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,227): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,248): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,258): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,280): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,299): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,309): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,334): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,372): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,382): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,407): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,443): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,453): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(46,478): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(80,18): warning C4047: '=': 'int' differs in levels of indirection from 'void *'
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(81,18): warning C4047: '=': 'int' differs in levels of indirection from 'void *'
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(107,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\fonks.h(108,57): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  (compiling source file 'main.c')
+  
+D:\vs\projects\Project2\Project2\main.c(216,44): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(221,51): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(224,51): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(227,44): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(234,31): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(239,44): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(242,44): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(245,31): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(258,34): warning C4018: '<': signed/unsigned mismatch
+D:\vs\projects\Project2\Project2\main.c(261,49): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(262,47): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(315,23): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(352,59): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(353,59): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(401,35): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(401,85): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(402,32): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(402,102): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(403,32): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(403,82): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(404,32): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(404,102): warning C4244: 'function': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(311,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(399,33): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(400,33): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(406,57): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(407,58): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(408,57): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(409,58): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(441,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(619,34): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(620,34): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(648,45): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(649,34): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(655,45): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(656,34): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(665,92): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(666,39): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(670,104): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(671,51): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(626,41): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(626,66): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(685,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(746,57): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(833,94): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(952,55): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(953,55): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\vs\projects\Project2\Project2\main.c(1019,63): warning C4047: 'function': 'Bullet *' differs in levels of indirection from 'Bullet (*)[40]'
+D:\vs\projects\Project2\Project2\main.c(1019,63): warning C4024: 'processEvents': different types for formal and actual parameter 5
+D:\vs\projects\Project2\Project2\main.c(1019,74): warning C4047: 'function': 'Enemy *' differs in levels of indirection from 'Enemy (*)[100]'
+D:\vs\projects\Project2\Project2\main.c(1019,74): warning C4024: 'processEvents': different types for formal and actual parameter 6
+D:\vs\projects\Project2\Project2\main.c(1019,109): warning C4047: 'function': 'Item *' differs in levels of indirection from 'Item (*)[100]'
+D:\vs\projects\Project2\Project2\main.c(1019,109): warning C4024: 'processEvents': different types for formal and actual parameter 9
+D:\vs\projects\Project2\Project2\main.c(1021,53): warning C4047: 'function': 'Bullet *' differs in levels of indirection from 'Bullet (*)[40]'
+D:\vs\projects\Project2\Project2\main.c(1021,53): warning C4024: 'doRender': different types for formal and actual parameter 5
+D:\vs\projects\Project2\Project2\main.c(1021,64): warning C4047: 'function': 'Enemy *' differs in levels of indirection from 'Enemy (*)[100]'
+D:\vs\projects\Project2\Project2\main.c(1021,64): warning C4024: 'doRender': different types for formal and actual parameter 6
+D:\vs\projects\Project2\Project2\main.c(1021,97): warning C4047: 'function': 'Item *' differs in levels of indirection from 'Item (*)[100]'
+D:\vs\projects\Project2\Project2\main.c(1021,97): warning C4024: 'doRender': different types for formal and actual parameter 9
+D:\vs\projects\Project2\Project2\main.c(1011,13): warning C4133: 'initializing': incompatible types - from 'Mix_Chunk *' to 'Mix_Music *'
+  Project2.vcxproj -> D:\vs\projects\Project2\x64\Debug\Project2.exe

@@ -1,0 +1,46 @@
+﻿  items.h
+D:\vs\projects\Project2\Project2\mystructs.h(108,13): error C2143: syntax error: missing ';' before '*'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(108,13): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(108,39): error C2238: unexpected token(s) preceding ';'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(109,13): error C2143: syntax error: missing ';' before '*'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(109,13): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(109,38): error C2238: unexpected token(s) preceding ';'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(110,13): error C2143: syntax error: missing ';' before '*'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(110,13): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(110,41): error C2238: unexpected token(s) preceding ';'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(111,13): error C2143: syntax error: missing ';' before '*'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(111,13): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(111,32): error C2238: unexpected token(s) preceding ';'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(112,13): error C2143: syntax error: missing ';' before '*'
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(112,13): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  (compiling source file 'items.h')
+  
+D:\vs\projects\Project2\Project2\mystructs.h(112,35): error C2238: unexpected token(s) preceding ';'
+  (compiling source file 'items.h')
+  
