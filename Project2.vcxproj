@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="items.h" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="upgrades.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fonks.h" />

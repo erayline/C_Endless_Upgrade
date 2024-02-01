@@ -1,13 +1,15 @@
 #ifndef FONKS_H
 #define FONKS_H
+
+
 #include "mystructs.h"
 #include "items.h"
-//#include <time.h>
+#include <time.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
-#include "items.h"
+
 int icindemi(float interval_left, float interval_right, float middle_point) {
 	//if it is in it is one
 	
@@ -18,18 +20,19 @@ int icindemi(float interval_left, float interval_right, float middle_point) {
 		return 0;
 	}
 }
-int girdiye_en_yakin_dusman_x_y(int x, int y) {
 
-	int tutucuX, tutucuY, tutucuP;
-	int uzaklikSirasi[enemy_count][2];
+int girdiye_en_yakin_dusman_x_y(float man_x, float man_y) {
+
+	float tutucuX, tutucuY, tutucuP;
+	float uzaklikSirasi[enemy_count][2];
 	for (int n = 0; n < enemy_count; n++) { 
-		tutucuX = calculate_distance(x, enemyler[n].x + enemyler[n].width / 2);
-		tutucuY = calculate_distance(y, enemyler[n].y + enemyler[n].height / 2);
+		tutucuX = man_x - (enemyler[n].x + enemyler[n].width / 2.0);
+		tutucuY = man_y - (enemyler[n].y + enemyler[n].height / 2.0);
 		tutucuP = sqrt(tutucuX * tutucuX + tutucuY * tutucuY);
 		uzaklikSirasi[n][0] = tutucuP;
 		uzaklikSirasi[n][1] = n;
 	}
-	int selection_sort_holder[2];
+	float selection_sort_holder[2];
 	selection_sort_holder[0] = 10000000;
 	selection_sort_holder[1] = 0;
 
@@ -82,20 +85,20 @@ int enemyEnemyCollision(int n) {
 				int enemyIX = (enemyler[i].x + enemyler[i].width) / 2;
 				int enemyIY = (enemyler[i].y + enemyler[i].height) / 2;
 				if (enemyNX > enemyIX) {
-					enemyler[n].x += 60 * delta_time;
-					enemyler[i].x -= 60 * delta_time;
+					enemyler[n].x += enemyler[i].width/3 * delta_time;
+					enemyler[i].x -= enemyler[n].width / 3 * delta_time;
 				}
 				else {
-					enemyler[n].x -= 60 * delta_time;
-					enemyler[i].x += 60 * delta_time;
+					enemyler[n].x -= enemyler[i].width / 3 * delta_time;
+					enemyler[i].x += enemyler[n].width / 3 * delta_time;
 				}
 				if (enemyNY > enemyIY) {
-					enemyler[n].y += 60 * delta_time;
-					enemyler[i].y -= 60 * delta_time;
+					enemyler[n].y += enemyler[i].width / 3 * delta_time;
+					enemyler[i].y -= enemyler[n].width / 3 * delta_time;
 				}
 				else {
-					enemyler[n].y -= 60 * delta_time;
-					enemyler[i].y += 60 * delta_time;
+					enemyler[n].y -= enemyler[i].width / 3 * delta_time;
+					enemyler[i].y += enemyler[n].width / 3 * delta_time;
 				}
 			}
 		}
@@ -103,11 +106,21 @@ int enemyEnemyCollision(int n) {
 	}
 }
 
-int autoBullet(int fromx,int fromy) {
+
+int isMouseInThis(int x_coord,int y_coord, int width, int height) {
+	if (icindemi(x_coord, x_coord + width, mouse_position.x) && icindemi(y_coord, y_coord + height, mouse_position.y)) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int autoBullet(float fromx,float fromy) {
 	int closest_enemy = girdiye_en_yakin_dusman_x_y(fromx, fromy);
-	int tutucuX = calculate_distance(fromx, enemyler[closest_enemy].x + enemyler[closest_enemy].width / 2);
-	int tutucuY = calculate_distance(fromy, enemyler[closest_enemy].y + enemyler[closest_enemy].height / 2);
-	int tutucuP = sqrt(tutucuX * tutucuX + tutucuY * tutucuY);
+	float tutucuX = fromx- (enemyler[closest_enemy].x + enemyler[closest_enemy].width / 2.0);
+	double tutucuY = fromy-(enemyler[closest_enemy].y + enemyler[closest_enemy].height / 2.0);
+	float tutucuP = sqrt(tutucuX * tutucuX + tutucuY * tutucuY);
 	if (man.range > tutucuP) {
 		for (int i = 0; i < mermi_count; i++) {
 			if (mermiler[i].life != 1) { // halihazýrda ateþlenmemiþ mermiyi ateþliyor
@@ -303,8 +316,8 @@ int spawnSpiece2(int level) {
 		if (enemyler[n].current_life < 1 && idd < 1) {
 			enemyler[n].y = spawnpoints.enemy_start_coord[n % 16][1];
 			enemyler[n].x = spawnpoints.enemy_start_coord[n % 16][0];
-			enemyler[n].width = 120 * level;
-			enemyler[n].height = 120 * level;
+			enemyler[n].width = 120;
+			enemyler[n].height = 120;
 			enemyler[n].max_life = 7 * level;
 			enemyler[n].current_life = enemyler[n].max_life;
 			enemyler[n].speed = 100;
@@ -319,6 +332,8 @@ int spawnSpiece2(int level) {
 	return 1;
 }
 
+
+//I am going to change this, it will depend on map size, and will be random.
 int defineSpawnPoints() {
 	for (int n = 0; n < 16; n++) {
 
@@ -381,9 +396,16 @@ int findTime() {
 	}
 }
 
+int marketIsOpen() {
+
+
+
+
+	return 1;
+}
+
 
 int isWaveOver() {
-
 	for (int n = 0; n < enemy_count; n++) {
 
 		if (enemyler[n].current_life > 0) {
@@ -403,7 +425,6 @@ int spawn1Enemy() { // wave spawn function
 	if (1) {
 		while (zorlukPoint != zorlukPointCheck) {
 			int iterasRan = rand() % 5;
-			printf("%d \n", iterasRan);
 			if (iterasRan == 4) {
 				zorlukPointCheck += 3;
 				if (zorlukPointCheck > zorlukPoint) {
@@ -492,19 +513,58 @@ int upgrade_protog() {
 }
 
 
-int calculate_distance(int deger1, int deger2) { // iki sayýnýn farkýnýn mutlaðýný bulan fonksiyon tanýmladým uzaklýk bulurken falan kullanýcam.
-	int sonuc = 0;
-	return abs(deger1 - deger2);
+float calculate_distance(float deger1, float deger2) { // iki sayýnýn farkýnýn mutlaðýný bulan fonksiyon tanýmladým uzaklýk bulurken falan kullanýcam.
+
+	if ((deger1 - deger2) > 0) {
+		return (deger1 - deger2);
+	}
+	else{
+		return (deger2 - deger1);
+	}
+
 }
 
 
-int ilk_buyukmu(int deger1, int deger2) {
+int ilk_buyukmu(float deger1, float deger2) {
 	if (deger1 >= deger2) {
 		return 1;
 	}
 	else {
 		return 0;
 	}
+}
+
+
+// upgrade part
+
+
+const int upgrade_count = 6;
+int upgradeIndexList[4];
+
+int liste_olustu = 0;
+int upgrade_secildi = 0;
+void createUpgradeList() {
+	//srand(time(NULL));
+
+	if (!liste_olustu) {
+		for (int n = 0; n < 4; n++) {
+			upgradeIndexList[n] = rand() % upgrade_count;
+		}
+	}
+	liste_olustu = 1;
+}
+
+char upgrade_names[6][20] = {
+		"attack speed ",
+		"move speed",
+		"bullet power",
+		"max life",
+		"additional gun",
+		"more enemy"
+};
+
+int upgradeReset() {
+	liste_olustu = 0;
 }
 
 

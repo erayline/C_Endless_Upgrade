@@ -92,16 +92,17 @@ int drawUIText() {
 }
 
 int drawWaveCount() {
-
 	char WaveSTR[16];
-	sprintf_s(WaveSTR, sizeof(WaveSTR), "Wave: %3d", game_stats.wave);
+
 	SDL_Color white = { 121,13,22,255 }; // para
+	sprintf_s(WaveSTR, sizeof(WaveSTR), "Wave: %3d", game_stats.wave);
 	SDL_Surface* text_surface2 = TTF_RenderText_Solid(font50, WaveSTR, white);
 	SDL_Texture* text_texture2 = SDL_CreateTextureFromSurface(renderer, text_surface2);
 	SDL_Rect text_rect = { WINDOW_WIDTH/2-text_surface2->w/2, 70 - text_surface2->h / 2,text_surface2->w,text_surface2->h };
 	SDL_RenderCopy(renderer, text_texture2, NULL, &text_rect);
 	SDL_DestroyTexture(text_texture2);
 	SDL_FreeSurface(text_surface2);
+
 }
 
 void drawHowToEnter() {
@@ -140,5 +141,80 @@ int drawPausedText() {
 }
 
 
+
+int drawUpgradeCardBack(int indexNumber) {
+	int x_coord=0, y_coord=0;
+	if (indexNumber == 0) {
+		x_coord = 130;
+		y_coord = 110;
+	}
+	else if (indexNumber == 1) {
+		x_coord = 530;
+		y_coord = 110;
+	}
+	else if (indexNumber == 2) {
+		x_coord = 130;
+		y_coord = 610;
+	}
+	else if (indexNumber == 3) {
+		x_coord = 530;
+		y_coord = 610;
+	}
+	int width = 300;
+	int height = 400;
+	SDL_Rect card_rect = { x_coord,y_coord,width,height};
+	if (isMouseInThis(x_coord, y_coord, width, height)) {
+		SDL_SetRenderDrawColor(renderer, 240, 20, 60, 1);
+		if (isPressed_left && indexNumber==0) {
+			if (upgrade_names[upgradeIndexList[0]] == "max life           ") {
+				printf("can artti");
+			}
+		}
+	}
+	else {
+		SDL_SetRenderDrawColor(renderer, 0, 20, 10, 1);
+	}
+
+	if (isPressed_left && isMouseInThis(x_coord, y_coord, width, height)) {
+		gui_state.page = 1;
+	}
+
+	SDL_RenderFillRect(renderer, &card_rect);
+	return 1;
+}
+
+
+// upgrade part
+
+void drawUpgradeCardInside(int indexNumber) {
+	char WaveSTR[20];
+	SDL_Color white = { 255,225,122,255 }; // para
+	sprintf_s(WaveSTR, sizeof(WaveSTR), "%s", upgrade_names[upgradeIndexList[indexNumber]]);
+	SDL_Surface* surface = TTF_RenderText_Solid(font50, WaveSTR, white);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	int x_coord=0, y_coord=0;
+
+	if (indexNumber == 0) {
+		x_coord = 170;
+		y_coord = 140;
+	}
+	else if (indexNumber == 1) {
+		x_coord = 570;
+		y_coord = 140;
+	}
+	else if (indexNumber == 2) {
+		x_coord = 170;
+		y_coord = 640;
+	}
+	else if (indexNumber == 3) {
+		x_coord = 570;
+		y_coord = 640;
+	}	
+
+	SDL_Rect text_rect = { x_coord, y_coord,215,60 };
+	SDL_RenderCopy(renderer, texture, NULL, &text_rect);
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);
+}
 
 #endif

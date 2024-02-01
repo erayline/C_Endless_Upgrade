@@ -1,11 +1,14 @@
 #ifndef STRUCTER_H
 #define STRUCTER_H
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+
 #define FPS = 60
 #define WINDOW_WIDTH 1920 // ön þiþmanlý komutlarý
 #define WINDOW_HEIGHT 1080
 #define FRAME_TARGET_TIME = (1000/FPS) //her frame kaç ms sürecek
-#define enemy_count 10
+#define enemy_count 200
 #define mermi_count 40
 #define MAP_WIDTH 2000
 #define MAP_HEIGHT 2000
@@ -34,6 +37,7 @@ int gidilecek_y = MAP_HEIGHT/2;
 float diagnal_man_m;
 float cosforx_man_m;
 float sinfory_man_m;
+
 
 
 int map_x = 0;
@@ -112,9 +116,9 @@ typedef struct {
 int q_pressed;
 typedef struct {
 	char name[20];
-	int x, y;
+	float x, y;
 	int size;
-	int range;
+	float range;
 	int puan;
 	int money;
 
@@ -164,7 +168,7 @@ typedef struct {
 }Bullet;
 
 typedef struct {
-	int x,y;
+	float x,y;
 	int color;
 
 	int max_life;
@@ -173,8 +177,7 @@ typedef struct {
 
 	int spiece;
 
-	int width;
-	int height;
+	float width,height;
 	int speed;
 	int enemy_walking_last_time;
 

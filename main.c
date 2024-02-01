@@ -1,4 +1,4 @@
-﻿#include <SDL.h>
+﻿
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
@@ -11,18 +11,17 @@
 #include "frontend.h"
 #include <time.h>
 
-
 SDL_Rect map1 = { 0,0,MAP_WIDTH,MAP_HEIGHT};
 
 
 int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_stats, Man* man, Bullet* mermiler, Enemy* enemyler, Mix_Chunk* hitEffect, Mix_Chunk* shootEffect, Item* itemler) { // burada işlemler oluyor
+	SDL_GetMouseState(&mouse_position.x, &mouse_position.y);
 
 	int done = 0;
 	delta_time = (SDL_GetTicks() - last_frame_time) / 1000.0f; // burada fps ile ilgili ayarlar var
 	last_frame_time = SDL_GetTicks();
-	for (int n = 0; n < enemy_count; n++) {
-		printf("%d \n", enemyler[n].x);
-	}
+
+	
 
 	findTime();
 
@@ -64,15 +63,15 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 				done = 1;
 				break;
 			case SDLK_SPACE: //denemek için
-				man->current_life = man->max_life;
 				gui_state->page = 1;
+				game_stats->wave += 1;
 				owned_items.CursedGlove_c++;
-				game_stats->wave++;
 				break;
 			case SDLK_q:
 				q_pressed = 1;
 				break;
 			case SDLK_TAB:
+				gui_state->page = 8;
 				item_bar_active = 1;
 				break;
 			case SDLK_p:
@@ -170,7 +169,6 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 		collision_man_item();
 		upgrade_protog();
 		
-		SDL_GetMouseState(&mouse_position.x, &mouse_position.y);
 
 
 		for (int i = 0; i < mermi_count; i++) {
@@ -180,13 +178,14 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 		autoBullet(man_ortasiX,man_ortasiY);
 		
 		if (isWaveOver()) {
+
 			spawn1Enemy();
 		}
 		
 
 
 		for (int n = 0; n < enemy_count; n++) {
-			//enemyEnemyCollision(n);
+			enemyEnemyCollision(n);
 
 			if (enemyler[n].current_life != enemyler[n].max_life) {
 				enemyler[n].life_bar_active = 1;
@@ -238,6 +237,8 @@ int processEvents(SDL_Window* window, GUI_State* gui_state, Game_stats* game_sta
 		}
 
 	} // bu gui'nin
+
+
 
 	return done;
 }
@@ -292,7 +293,6 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		{10,10},{10,WINDOW_HEIGHT - 10},{WINDOW_WIDTH / 2,10},{WINDOW_WIDTH / 2,WINDOW_HEIGHT - 10},{WINDOW_WIDTH - 10,10},{WINDOW_WIDTH - 10,WINDOW_HEIGHT - 10},{10,WINDOW_HEIGHT / 2},{WINDOW_WIDTH - 10,WINDOW_HEIGHT / 2}
 		};
 
-
 		if (man->animation == 1) {
 				
 			SDL_Rect player_on_screen = { man->x - camera.x-90,man->y - camera.y - 100, man->size*3,man->size*3};
@@ -334,7 +334,7 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 		}
 
 
-		if (man->animation == 3) {			
+		if (man->animation == 3) {				
 			SDL_Rect rect2 = { man->x -camera.x-90,man->y -camera.y - 100, man->size*3,man->size*3 };
 			SDL_Rect protogonist_image_rect2 = {  0+ man->attack_image_width_increment, 0, 250, 250 };
 
@@ -390,12 +390,6 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 
 		// creating right click effect:
 
-
-
-
-
-
-
 		// bar oluşturma
 
 
@@ -425,13 +419,13 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 
 			bar_rect_back[n].w = enemy_life_bar_width;
 			bar_rect_back[n].h = enemy_life_bar_height;
-			bar_rect_back[n].x = (enemyler[n].x + enemyler[n].width / 2 - enemy_life_bar_width / 2) - camera.x;
-			bar_rect_back[n].y = enemyler[n].y - camera.y;
+			bar_rect_back[n].x = (enemyler[n].x + enemyler[n].width / 2 - enemy_life_bar_width / 2) - camera.x ;
+			bar_rect_back[n].y = enemyler[n].y - camera.y - enemy_life_bar_height;
 
 			bar_rect_front[n].w = (enemy_life_bar_width - 10) - (enemyler[n].max_life - enemyler[n].current_life) * (enemy_life_bar_width / enemyler[n].max_life);
 			bar_rect_front[n].h = enemy_life_bar_height - 10;
 			bar_rect_front[n].x = (enemyler[n].x + enemyler[n].width / 2 - enemy_life_bar_width / 2) - camera.x + 5;
-			bar_rect_front[n].y = enemyler[n].y - camera.y + 5;
+			bar_rect_front[n].y = enemyler[n].y - camera.y + 5 - enemy_life_bar_height;
 			enemy_life_bar_width = 30;
 
 			if ((enemyler[n].current_life > 0) && (enemyler[n].life_bar_active)) {
@@ -449,56 +443,24 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 				float cosforx_enem = (man->x + man->size / 2 - enemyler[n].x - enemyler[n].width / 2) / diagnal_enem;
 				float sinfory_enem = (man->y + man->size / 2 - enemyler[n].y - enemyler[n].height / 2) / diagnal_enem;
 				if (cosforx_enem > 0) {
+					SDL_SetRenderDrawColor(renderer, 200, 20, 20, 255);
 					if (enemyler[n].spiece == 1) {
-						if (100 < SDL_GetTicks() - enemyler[n].enemy_walking_last_time) {
-							enemyler[n].enemy1_walking_image_width += 150;
-							enemyler[n].enemy_walking_last_time = SDL_GetTicks();
-							if (enemyler[n].enemy1_walking_image_width > 1050) {
-								enemyler[n].enemy1_walking_image_width = 0;
-							}
-						}
-
-						SDL_Rect enemy1_image_rect = { 50 + enemyler[n].enemy1_walking_image_width,50,50,50 };
-						SDL_RenderCopy(renderer, game_assets->enemy1_run_image_texture, &enemy1_image_rect, &enemy_1[n]);
+						SDL_SetRenderDrawColor(renderer, 200, 20, 20, 255);
+						SDL_RenderFillRect(renderer, &enemy_1[n]);
 					}
-
 					if (enemyler[n].spiece == 2) {
-						if (200 < SDL_GetTicks() - enemyler[n].enemy_walking_last_time) {
-							enemyler[n].enemy2_walking_image_width += 150;
-							enemyler[n].enemy_walking_last_time = SDL_GetTicks();
-							if (enemyler[n].enemy2_walking_image_width > 599) {
-								enemyler[n].enemy2_walking_image_width = 0;
-							}
-						}
-						SDL_Rect enemy2_image_rect = { 50 + enemyler[n].enemy2_walking_image_width,50,50,50 };
-						SDL_RenderCopy(renderer, game_assets->enemy2_run_image_texture, &enemy2_image_rect, &enemy_2[n]);
+						SDL_SetRenderDrawColor(renderer, 20, 120, 20, 255);
+						SDL_RenderFillRect(renderer, &enemy_2[n]);
 					}
-				
 				}
 				else {
 					if (enemyler[n].spiece == 1) {
-						if (100 < SDL_GetTicks() - enemyler[n].enemy_walking_last_time) {
-							enemyler[n].enemy1_walking_image_width += 150;
-							enemyler[n].enemy_walking_last_time = SDL_GetTicks();
-							if (enemyler[n].enemy1_walking_image_width > 1050) {
-								enemyler[n].enemy1_walking_image_width = 0;
-							}
-						}
-						SDL_Rect enemy1_image_rect = { 50 + enemyler[n].enemy1_walking_image_width,50,50,50 };
-						SDL_RenderCopyEx(renderer, game_assets->enemy1_run_image_texture, &enemy1_image_rect, &enemy_1[n], 0.0, NULL, SDL_FLIP_HORIZONTAL);
+						SDL_SetRenderDrawColor(renderer, 200, 20, 20, 255);
+						SDL_RenderFillRect(renderer, &enemy_1[n]);
 					}
-
 					if (enemyler[n].spiece == 2) {
-
-						if (200 < SDL_GetTicks() - enemyler[n].enemy_walking_last_time) {
-							enemyler[n].enemy2_walking_image_width += 150;
-							enemyler[n].enemy_walking_last_time = SDL_GetTicks();
-							if (enemyler[n].enemy2_walking_image_width > 599) {
-								enemyler[n].enemy2_walking_image_width = 0;
-							}
-						}
-						SDL_Rect enemy2_image_rect = { 50 + enemyler[n].enemy2_walking_image_width,50,50,50 };
-						SDL_RenderCopyEx(renderer, game_assets->enemy2_run_image_texture, &enemy2_image_rect, &enemy_2[n], 0.0, NULL, SDL_FLIP_HORIZONTAL);
+						SDL_SetRenderDrawColor(renderer, 20, 120, 20, 255);
+						SDL_RenderFillRect(renderer, &enemy_2[n]);
 					}
 				}
 			}
@@ -581,15 +543,22 @@ void doRender(SDL_Renderer* renderer, GUI_State* gui_state, Game_stats* game_sta
 
 			///////HARİTA KAYDIRMA bitiş
 		//}
+
+		upgradeReset();
 	}
 	if (gui_state->page == 9) {
 		drawPausedText();
 	}
-	if (gui_state->page == 8) {
 
-		SDL_SetRenderDrawColor(renderer, 20, 200, 100, 105);
-		SDL_Rect upgrade_back_rect = { 30,WINDOW_HEIGHT / 4,WINDOW_WIDTH - 30,WINDOW_HEIGHT / 2 };
-		SDL_RenderFillRect(renderer, &upgrade_back_rect);
+	if (gui_state->page == 8) {
+		//createUpgradeList();
+		if (!liste_olustu) {
+			createUpgradeList();
+		}
+		for (int n = 0; n < 4; n++) {
+			drawUpgradeCardBack(n);
+			drawUpgradeCardInside(n);
+		}
 
 	}
 

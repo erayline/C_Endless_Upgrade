@@ -21,6 +21,9 @@
     <ClCompile Include="items.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="upgrades.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mystructs.h">
